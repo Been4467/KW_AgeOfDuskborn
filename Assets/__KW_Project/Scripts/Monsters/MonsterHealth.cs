@@ -11,8 +11,9 @@ namespace KW
         [TextArea(2, 3)]
         [SerializeField] private string scriptPurpose;
 
+        protected float _baseHp;            // 파싱된 데이터 원본 값 (수정안함)
         protected float _currentHp;
-        protected float _maxHp;
+        protected float _maxHp;             // 보정에 의해 수정될 값  
 
         // 읽기 전용
         public float currentHp => _currentHp;
@@ -30,10 +31,21 @@ namespace KW
 
         public virtual void InitializeHealth(float parsedMaxHp)
         {
-            _maxHp = parsedMaxHp;
+            _baseHp = parsedMaxHp;
+            _maxHp = _baseHp;
             _currentHp = _maxHp;
 
             OnHealthChanged?.Invoke(_currentHp, _maxHp);
+        }
+
+        public virtual void UpdateHealth(int level, float multiplier)
+        {
+            _maxHp = _baseHp + (_baseHp * level * multiplier);
+            _currentHp = _maxHp;
+
+            OnHealthChanged?.Invoke(_currentHp, _maxHp);
+
+            Debug.Log($"MonsterHealth._maxHp : {_maxHp}");
         }
 
         public virtual void TakeDamage(float damage, Transform attacker)

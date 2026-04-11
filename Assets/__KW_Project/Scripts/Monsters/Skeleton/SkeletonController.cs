@@ -32,7 +32,7 @@ namespace KW
         [Header("이동")]
         public float patrolSpeed = 1;
         public float chaseSpeed = 3;
-        
+
         [Header("추격,공격 범위")]
         [HideInInspector] public float detectRange = 5f;
         [HideInInspector] public float attackRange = 0.8f;
@@ -46,11 +46,12 @@ namespace KW
 
         public LayerMask playerLayer;
         public Transform wayPoints;                                 // 목적지
-        public int       wayPointIndex;                             // 목적지 인덱스 ( 증가시킬거임 ) 
+        public int wayPointIndex;                             // 목적지 인덱스 ( 증가시킬거임 ) 
 
         public Transform target;
 
         [Header("공격")]
+        protected float _baseDamage;            //  데이터 원본 값 (수정안함)
         public float damage = 25;
         public float lungeForce = 2f;                              // 공격 후 반동
         public float lungeDuration = 0.2f;
@@ -83,26 +84,26 @@ namespace KW
 
             health = GetComponent<MonsterHealth>();
 
-
-            if(health == null)
+            if (health == null)
             {
                 Debug.LogError("Skeleton 의 SkeletonHealth 참조가 없음");
             }
 
             // 스클레톤마다 랜덤한 시간 부여
-            suspiciousTime = Random.Range(minSuspiciousTime, maxSuspiciousTime);            
+            suspiciousTime = Random.Range(minSuspiciousTime, maxSuspiciousTime);
         }
 
         private void Start()
         {
             LoadStatsParsing();
 
-            if(health != null)
+            if (health != null)
             {
                 health.OnHit += HandleHit;
                 health.OnDeath += HandleDeath;
             }
-           
+
+            _baseDamage = damage;
             agent.updateRotation = false;
             rb.isKinematic = true;
             SwitchState(idleState);
@@ -117,16 +118,23 @@ namespace KW
 
                 // 가져온 데이터로 변수 값 초기화
                 patrolSpeed = data.patrolSpeed;
-                chaseSpeed = data.chaseSpeed;                
+                chaseSpeed = data.chaseSpeed;
                 detectRange = data.detectRange;
                 coolDownDuration = data.coolDownDuration;
                 damage = data.damage;
 
-                if(health != null)
+                if (health != null)
                 {
                     health.InitializeHealth(data.maxHp);
                 }
             }
+        }
+
+        public virtual void UpdateDamage(int level, float multiplier)
+        {
+            damage = _baseDamage + (_baseDamage * level * multiplier);
+
+            Debug.Log($"SkeletonController.damage : {damage}");
         }
 
         private void Update()
@@ -142,7 +150,7 @@ namespace KW
             currentState?.ExitState(this);
 
             currentState = monsterState;
-            currentState.EnterState(this);            
+            currentState.EnterState(this);
         }
 
         public void PerformAttackLunge()
@@ -174,7 +182,7 @@ namespace KW
             isDoingLunge = false;
         }
 
-        
+
         public void StartCoolDown()
         {
             SwitchState(coolDownState);
