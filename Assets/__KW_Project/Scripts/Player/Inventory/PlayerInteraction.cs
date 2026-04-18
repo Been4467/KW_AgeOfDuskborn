@@ -16,8 +16,8 @@ namespace KW
 
         private void Awake()
         {
-            playerMovement = GetComponent<PlayerMovement>();    
-            if(playerMovement == null)
+            playerMovement = GetComponent<PlayerMovement>();
+            if (playerMovement == null)
             {
                 Debug.LogError("PlayerMovement 를 찾을 수 없음");
             }
@@ -35,7 +35,7 @@ namespace KW
             }
 
             if (playerMovement.isSitting) return;
-            
+
             // E 키를 누르는 '순간'
             if (Input.GetKeyDown(interactionKey))
             {
@@ -43,8 +43,6 @@ namespace KW
                 {
                     return;
                 }
-
-                
 
                 RaycastHit hit;
                 Vector3 startPos = transform.position;
@@ -62,7 +60,7 @@ namespace KW
                     direction = transform.forward;
                 }
 
-                if(Physics.Raycast(startPos, direction, out hit, interactionDistance))
+                if (Physics.Raycast(startPos, direction, out hit, interactionDistance))
                 {
                     IInteractable interactable = hit.collider.GetComponent<IInteractable>();
 

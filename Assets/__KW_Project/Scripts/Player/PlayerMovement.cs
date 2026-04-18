@@ -229,11 +229,11 @@ namespace KW
 
             if (Input.GetMouseButtonDown(0) && IsGrounded() && !isAttacking)
             {
-                
+
                 if (IsPointerOverUIObject())
                 {
                     Debug.Log("UI 위에 마우스가 있어서 공격 입력을 무시합니다.");
-                    return; 
+                    return;
                 }
                 if (playerHealth == null)
                 {
@@ -291,7 +291,7 @@ namespace KW
 
             if (item is Potion potion)
             {
-                if(playerHealth.currentHp >= playerHealth.maxHp)
+                if (playerHealth.currentHp >= playerHealth.maxHp)
                 {
                     Debug.Log("플레이어의 체력을 더 이상 회복할 수 없습니다.");
 

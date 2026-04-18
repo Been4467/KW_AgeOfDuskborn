@@ -19,12 +19,12 @@ namespace KW
 
                 PlayerHealth health = player.GetComponent<PlayerHealth>();
 
-                if(health != null)
+                if (health != null)
                 {
                     health.Heal(health.maxHp);
                     Debug.Log("화톳불 휴식 : 체력이 모두 회복되었습니다");
                 }
-                
+
             }
         }
     }

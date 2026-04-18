@@ -12,20 +12,21 @@ namespace KW
             // movement.canMove = false;
 
             movement.anim.SetBool("isSit", true);
+            movement.sr.flipX = (movement.lastMoveX > 0);
 
-           /*  if (SaveManager.Instance != null)
-            {
-                SaveManager.Instance.SaveGame();
-                Debug.Log("화톳불에 앉아 게임을 저장했습니다.");
-            }
-            if (NotificationManager.Instance != null)
-            {
-                string message = "게임이 저장되었습니다.\n\n" + "체력이 회복되었습니다.";
-                NotificationManager.Instance.ShowMessage(message);
-            } */
+            /*  if (SaveManager.Instance != null)
+             {
+                 SaveManager.Instance.SaveGame();
+                 Debug.Log("화톳불에 앉아 게임을 저장했습니다.");
+             }
+             if (NotificationManager.Instance != null)
+             {
+                 string message = "게임이 저장되었습니다.\n\n" + "체력이 회복되었습니다.";
+                 NotificationManager.Instance.ShowMessage(message);
+             } */
         }
 
-       public override void UpdateState(PlayerMovement movement)
+        public override void UpdateState(PlayerMovement movement)
         {
             // E키를 다시 누르거나, 이동 키를 누르면 일어남
             float x = Input.GetAxisRaw("Horizontal");
