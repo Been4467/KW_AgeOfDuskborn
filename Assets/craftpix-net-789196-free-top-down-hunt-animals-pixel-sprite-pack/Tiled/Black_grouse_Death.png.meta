@@ -1,0 +1,754 @@
+fileFormatVersion: 2
+guid: 4d07ef10c77680b449d232e15245e504
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -667022295125873936
+    second: Black_grouse_Death_0
+  - first:
+      213: -5121858371075126437
+    second: Black_grouse_Death_1
+  - first:
+      213: 7255491733506294266
+    second: Black_grouse_Death_2
+  - first:
+      213: 1524890972431265593
+    second: Black_grouse_Death_3
+  - first:
+      213: 6978168802137183863
+    second: Black_grouse_Death_4
+  - first:
+      213: 185615784309753060
+    second: Black_grouse_Death_5
+  - first:
+      213: -6884418346153171756
+    second: Black_grouse_Death_6
+  - first:
+      213: -8952952607605134916
+    second: Black_grouse_Death_7
+  - first:
+      213: 7917630476957553156
+    second: Black_grouse_Death_8
+  - first:
+      213: -4109916396964132138
+    second: Black_grouse_Death_9
+  - first:
+      213: -4456426320492134699
+    second: Black_grouse_Death_10
+  - first:
+      213: -392732412309594161
+    second: Black_grouse_Death_11
+  - first:
+      213: 9062409180910423508
+    second: Black_grouse_Death_12
+  - first:
+      213: -7278316902597078835
+    second: Black_grouse_Death_13
+  - first:
+      213: 2724263103003354153
+    second: Black_grouse_Death_14
+  - first:
+      213: -1546918663208210426
+    second: Black_grouse_Death_15
+  - first:
+      213: -6796837648417645706
+    second: Black_grouse_Death_16
+  - first:
+      213: -3891009133321228111
+    second: Black_grouse_Death_17
+  - first:
+      213: -793185277684083342
+    second: Black_grouse_Death_18
+  - first:
+      213: 7210245859767077092
+    second: Black_grouse_Death_19
+  - first:
+      213: 1143920854631076634
+    second: Black_grouse_Death_20
+  - first:
+      213: 1041135804320597785
+    second: Black_grouse_Death_21
+  - first:
+      213: 6788921068702398692
+    second: Black_grouse_Death_22
+  - first:
+      213: -6617508384841462647
+    second: Black_grouse_Death_23
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Black_grouse_Death_0
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 102
+        width: 21
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0faa1c1b1c24eb6f0800000000000000
+      internalID: -667022295125873936
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Death_1
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 102
+        width: 21
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5bc432c2f08be8b0800000000000000
+      internalID: -5121858371075126437
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Death_2
+      rect:
+        serializedVersion: 2
+        x: 70
+        y: 102
+        width: 19
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af10d665a4fa0b460800000000000000
+      internalID: 7255491733506294266
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Death_3
+      rect:
+        serializedVersion: 2
+        x: 102
+        y: 101
+        width: 19
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93f27fc9240892510800000000000000
+      internalID: 1524890972431265593
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Death_4
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 101
+        width: 19
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 776991abd8f67d060800000000000000
+      internalID: 6978168802137183863
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Death_5
+      rect:
+        serializedVersion: 2
+        x: 166
+        y: 101
+        width: 19
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e40d788290739200800000000000000
+      internalID: 185615784309753060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Death_6
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 70
+        width: 18
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d4ab584df1a570a0800000000000000
+      internalID: -6884418346153171756
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Death_7
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 70
+        width: 21
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb9e9c4c909b0c380800000000000000
+      internalID: -8952952607605134916
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Death_8
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 70
+        width: 17
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4029cd928f211ed60800000000000000
+      internalID: 7917630476957553156
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Death_9
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 65
+        width: 17
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6da466eefc4a6f6c0800000000000000
+      internalID: -4109916396964132138
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Death_10
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 65
+        width: 17
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5de7d576fd79722c0800000000000000
+      internalID: -4456426320492134699
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Death_11
+      rect:
+        serializedVersion: 2
+        x: 167
+        y: 65
+        width: 17
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fcf1188a3fbbc8af0800000000000000
+      internalID: -392732412309594161
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Death_12
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 38
+        width: 24
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4dd8765a22524cd70800000000000000
+      internalID: 9062409180910423508
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Death_13
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 38
+        width: 24
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc0daf9d6593efa90800000000000000
+      internalID: -7278316902597078835
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Death_14
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 38
+        width: 28
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 924e731cbd68ec520800000000000000
+      internalID: 2724263103003354153
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Death_15
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 35
+        width: 29
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6007d07fbad388ae0800000000000000
+      internalID: -1546918663208210426
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Death_16
+      rect:
+        serializedVersion: 2
+        x: 127
+        y: 35
+        width: 29
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67b90128b28cca1a0800000000000000
+      internalID: -6796837648417645706
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Death_17
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 35
+        width: 29
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b076960fcb500ac0800000000000000
+      internalID: -3891009133321228111
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Death_18
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 6
+        width: 24
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2751292413a0ef4f0800000000000000
+      internalID: -793185277684083342
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Death_19
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 6
+        width: 24
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e8c5ae6860ff0460800000000000000
+      internalID: 7210245859767077092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Death_20
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 6
+        width: 28
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a13527fd4f500ef00800000000000000
+      internalID: 1143920854631076634
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Death_21
+      rect:
+        serializedVersion: 2
+        x: 100
+        y: 3
+        width: 29
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 91748737f7bd27e00800000000000000
+      internalID: 1041135804320597785
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Death_22
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 3
+        width: 29
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e8fb242eb7173e50800000000000000
+      internalID: 6788921068702398692
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Death_23
+      rect:
+        serializedVersion: 2
+        x: 164
+        y: 3
+        width: 28
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98c0b5f5f23e924a0800000000000000
+      internalID: -6617508384841462647
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Black_grouse_Death_0: -667022295125873936
+      Black_grouse_Death_1: -5121858371075126437
+      Black_grouse_Death_10: -4456426320492134699
+      Black_grouse_Death_11: -392732412309594161
+      Black_grouse_Death_12: 9062409180910423508
+      Black_grouse_Death_13: -7278316902597078835
+      Black_grouse_Death_14: 2724263103003354153
+      Black_grouse_Death_15: -1546918663208210426
+      Black_grouse_Death_16: -6796837648417645706
+      Black_grouse_Death_17: -3891009133321228111
+      Black_grouse_Death_18: -793185277684083342
+      Black_grouse_Death_19: 7210245859767077092
+      Black_grouse_Death_2: 7255491733506294266
+      Black_grouse_Death_20: 1143920854631076634
+      Black_grouse_Death_21: 1041135804320597785
+      Black_grouse_Death_22: 6788921068702398692
+      Black_grouse_Death_23: -6617508384841462647
+      Black_grouse_Death_3: 1524890972431265593
+      Black_grouse_Death_4: 6978168802137183863
+      Black_grouse_Death_5: 185615784309753060
+      Black_grouse_Death_6: -6884418346153171756
+      Black_grouse_Death_7: -8952952607605134916
+      Black_grouse_Death_8: 7917630476957553156
+      Black_grouse_Death_9: -4109916396964132138
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

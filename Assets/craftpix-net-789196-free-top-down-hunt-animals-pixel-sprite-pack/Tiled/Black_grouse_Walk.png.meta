@@ -1,0 +1,754 @@
+fileFormatVersion: 2
+guid: b50059c785b8cb249a1677f2a88e216d
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -1021251015442652952
+    second: Black_grouse_Walk_0
+  - first:
+      213: -970682851472520299
+    second: Black_grouse_Walk_1
+  - first:
+      213: -936456684005467592
+    second: Black_grouse_Walk_2
+  - first:
+      213: 3003576258349671313
+    second: Black_grouse_Walk_3
+  - first:
+      213: -8418369144226594638
+    second: Black_grouse_Walk_4
+  - first:
+      213: -2399882382212335057
+    second: Black_grouse_Walk_5
+  - first:
+      213: -4127006034888026144
+    second: Black_grouse_Walk_6
+  - first:
+      213: 1720662325722982146
+    second: Black_grouse_Walk_7
+  - first:
+      213: 5700301590089463628
+    second: Black_grouse_Walk_8
+  - first:
+      213: 7683785707933854940
+    second: Black_grouse_Walk_9
+  - first:
+      213: 4133280126549330506
+    second: Black_grouse_Walk_10
+  - first:
+      213: -257097947862928366
+    second: Black_grouse_Walk_11
+  - first:
+      213: 1076040826587166220
+    second: Black_grouse_Walk_12
+  - first:
+      213: 8924532340639888805
+    second: Black_grouse_Walk_13
+  - first:
+      213: 7156147391963290199
+    second: Black_grouse_Walk_14
+  - first:
+      213: -4303138637032685162
+    second: Black_grouse_Walk_15
+  - first:
+      213: 305370455229624406
+    second: Black_grouse_Walk_16
+  - first:
+      213: 7056747129790676287
+    second: Black_grouse_Walk_17
+  - first:
+      213: 1490704924068071957
+    second: Black_grouse_Walk_18
+  - first:
+      213: 8547131618079623055
+    second: Black_grouse_Walk_19
+  - first:
+      213: 9122733363374785573
+    second: Black_grouse_Walk_20
+  - first:
+      213: 6133965451430377737
+    second: Black_grouse_Walk_21
+  - first:
+      213: 6346607599177127835
+    second: Black_grouse_Walk_22
+  - first:
+      213: 1087560520677638349
+    second: Black_grouse_Walk_23
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Black_grouse_Walk_0
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 101
+        width: 21
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e0a80ebc99c3d1f0800000000000000
+      internalID: -1021251015442652952
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Walk_1
+      rect:
+        serializedVersion: 2
+        x: 39
+        y: 101
+        width: 17
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59bca68e6117782f0800000000000000
+      internalID: -970682851472520299
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Walk_2
+      rect:
+        serializedVersion: 2
+        x: 70
+        y: 101
+        width: 19
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83a50528b990103f0800000000000000
+      internalID: -936456684005467592
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Walk_3
+      rect:
+        serializedVersion: 2
+        x: 102
+        y: 101
+        width: 21
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 193aabe71b8dea920800000000000000
+      internalID: 3003576258349671313
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Walk_4
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 101
+        width: 25
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b0c342add1fb2b80800000000000000
+      internalID: -8418369144226594638
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Walk_5
+      rect:
+        serializedVersion: 2
+        x: 165
+        y: 102
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2af38140b7e1bed0800000000000000
+      internalID: -2399882382212335057
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Walk_6
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 69
+        width: 19
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e71b9880ede9b6c0800000000000000
+      internalID: -4127006034888026144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Walk_7
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 69
+        width: 21
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 207ad1fc44501e710800000000000000
+      internalID: 1720662325722982146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Walk_8
+      rect:
+        serializedVersion: 2
+        x: 70
+        y: 69
+        width: 19
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c4770ed381a8b1f40800000000000000
+      internalID: 5700301590089463628
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Walk_9
+      rect:
+        serializedVersion: 2
+        x: 102
+        y: 69
+        width: 18
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cdcee93146a42aa60800000000000000
+      internalID: 7683785707933854940
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Walk_10
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 69
+        width: 21
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4a8724406c5c5930800000000000000
+      internalID: 4133280126549330506
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Walk_11
+      rect:
+        serializedVersion: 2
+        x: 168
+        y: 70
+        width: 19
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 214f52157ca9e6cf0800000000000000
+      internalID: -257097947862928366
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Walk_12
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 38
+        width: 25
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c06bb804e6ddeee00800000000000000
+      internalID: 1076040826587166220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Walk_13
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 38
+        width: 25
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a5735e21ee4adb70800000000000000
+      internalID: 8924532340639888805
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Walk_14
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 38
+        width: 24
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75a5f4a532ebf4360800000000000000
+      internalID: 7156147391963290199
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Walk_15
+      rect:
+        serializedVersion: 2
+        x: 100
+        y: 38
+        width: 24
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6918868653e2844c0800000000000000
+      internalID: -4303138637032685162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Walk_16
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 38
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6507cd4afc4ec3400800000000000000
+      internalID: 305370455229624406
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Walk_17
+      rect:
+        serializedVersion: 2
+        x: 164
+        y: 38
+        width: 24
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3d3ee4502a9ee160800000000000000
+      internalID: 7056747129790676287
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Walk_18
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 6
+        width: 25
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51ac008fa3c00b410800000000000000
+      internalID: 1490704924068071957
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Walk_19
+      rect:
+        serializedVersion: 2
+        x: 35
+        y: 6
+        width: 25
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8745280ce28d9670800000000000000
+      internalID: 8547131618079623055
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Walk_20
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 6
+        width: 24
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5240f80e8a57a9e70800000000000000
+      internalID: 9122733363374785573
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Walk_21
+      rect:
+        serializedVersion: 2
+        x: 100
+        y: 6
+        width: 24
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 909b6053419302550800000000000000
+      internalID: 6133965451430377737
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Walk_22
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 6
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b975fb55cfda31850800000000000000
+      internalID: 6346607599177127835
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Walk_23
+      rect:
+        serializedVersion: 2
+        x: 164
+        y: 6
+        width: 24
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc0caba088ac71f00800000000000000
+      internalID: 1087560520677638349
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Black_grouse_Walk_0: -1021251015442652952
+      Black_grouse_Walk_1: -970682851472520299
+      Black_grouse_Walk_10: 4133280126549330506
+      Black_grouse_Walk_11: -257097947862928366
+      Black_grouse_Walk_12: 1076040826587166220
+      Black_grouse_Walk_13: 8924532340639888805
+      Black_grouse_Walk_14: 7156147391963290199
+      Black_grouse_Walk_15: -4303138637032685162
+      Black_grouse_Walk_16: 305370455229624406
+      Black_grouse_Walk_17: 7056747129790676287
+      Black_grouse_Walk_18: 1490704924068071957
+      Black_grouse_Walk_19: 8547131618079623055
+      Black_grouse_Walk_2: -936456684005467592
+      Black_grouse_Walk_20: 9122733363374785573
+      Black_grouse_Walk_21: 6133965451430377737
+      Black_grouse_Walk_22: 6346607599177127835
+      Black_grouse_Walk_23: 1087560520677638349
+      Black_grouse_Walk_3: 3003576258349671313
+      Black_grouse_Walk_4: -8418369144226594638
+      Black_grouse_Walk_5: -2399882382212335057
+      Black_grouse_Walk_6: -4127006034888026144
+      Black_grouse_Walk_7: 1720662325722982146
+      Black_grouse_Walk_8: 5700301590089463628
+      Black_grouse_Walk_9: 7683785707933854940
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

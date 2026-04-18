@@ -1,0 +1,754 @@
+fileFormatVersion: 2
+guid: b36aede91d4b3864a9b802f019c136ec
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -7004207912756426262
+    second: Black_grouse_Flight_with_shadow_0
+  - first:
+      213: -5244743433939452535
+    second: Black_grouse_Flight_with_shadow_1
+  - first:
+      213: -2376152389815881754
+    second: Black_grouse_Flight_with_shadow_2
+  - first:
+      213: 5618567262117005379
+    second: Black_grouse_Flight_with_shadow_3
+  - first:
+      213: -1173731573225866083
+    second: Black_grouse_Flight_with_shadow_4
+  - first:
+      213: 8254121692566986157
+    second: Black_grouse_Flight_with_shadow_5
+  - first:
+      213: 7788688993628228290
+    second: Black_grouse_Flight_with_shadow_6
+  - first:
+      213: 6644963214011973740
+    second: Black_grouse_Flight_with_shadow_7
+  - first:
+      213: 9122284290746364213
+    second: Black_grouse_Flight_with_shadow_8
+  - first:
+      213: -3638593888954446068
+    second: Black_grouse_Flight_with_shadow_9
+  - first:
+      213: -798477214999407052
+    second: Black_grouse_Flight_with_shadow_10
+  - first:
+      213: -4062155214180131924
+    second: Black_grouse_Flight_with_shadow_11
+  - first:
+      213: -6229904663055024291
+    second: Black_grouse_Flight_with_shadow_12
+  - first:
+      213: -6301526832522919607
+    second: Black_grouse_Flight_with_shadow_13
+  - first:
+      213: -8574274248876624949
+    second: Black_grouse_Flight_with_shadow_14
+  - first:
+      213: -3527587489314156168
+    second: Black_grouse_Flight_with_shadow_15
+  - first:
+      213: 7961479430909740018
+    second: Black_grouse_Flight_with_shadow_16
+  - first:
+      213: -7961173610176580288
+    second: Black_grouse_Flight_with_shadow_17
+  - first:
+      213: 4883495779356817612
+    second: Black_grouse_Flight_with_shadow_18
+  - first:
+      213: 2309653615423142617
+    second: Black_grouse_Flight_with_shadow_19
+  - first:
+      213: -5490069892561802005
+    second: Black_grouse_Flight_with_shadow_20
+  - first:
+      213: -1204298690818755615
+    second: Black_grouse_Flight_with_shadow_21
+  - first:
+      213: -3039361835443608127
+    second: Black_grouse_Flight_with_shadow_22
+  - first:
+      213: -7591628910761977101
+    second: Black_grouse_Flight_with_shadow_23
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Black_grouse_Flight_with_shadow_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 101
+        width: 32
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae94c23630e0cce90800000000000000
+      internalID: -7004207912756426262
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Flight_with_shadow_1
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 100
+        width: 31
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98df9f972ade637b0800000000000000
+      internalID: -5244743433939452535
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Flight_with_shadow_2
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 100
+        width: 33
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ef24d8adf5360fd0800000000000000
+      internalID: -2376152389815881754
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Flight_with_shadow_3
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 101
+        width: 33
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3488f1d082929fd40800000000000000
+      internalID: 5618567262117005379
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Flight_with_shadow_4
+      rect:
+        serializedVersion: 2
+        x: 127
+        y: 101
+        width: 33
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d9c36345a5116bfe0800000000000000
+      internalID: -1173731573225866083
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Flight_with_shadow_5
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 101
+        width: 33
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dad1d4a72f78c8270800000000000000
+      internalID: 8254121692566986157
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Flight_with_shadow_6
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 68
+        width: 32
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ca843b9f5bf61c60800000000000000
+      internalID: 7788688993628228290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Flight_with_shadow_7
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 67
+        width: 33
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c60c8bc26d6a73c50800000000000000
+      internalID: 6644963214011973740
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Flight_with_shadow_8
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 67
+        width: 33
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 53130120b3dd89e70800000000000000
+      internalID: 9122284290746364213
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Flight_with_shadow_9
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 68
+        width: 33
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0f86f6d22e118dc0800000000000000
+      internalID: -3638593888954446068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Flight_with_shadow_10
+      rect:
+        serializedVersion: 2
+        x: 127
+        y: 68
+        width: 33
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43697b6143d3be4f0800000000000000
+      internalID: -798477214999407052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Flight_with_shadow_11
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 68
+        width: 33
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cabda4cda5350a7c0800000000000000
+      internalID: -4062155214180131924
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Flight_with_shadow_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 39
+        width: 32
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5f3e0667beea89a0800000000000000
+      internalID: -6229904663055024291
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Flight_with_shadow_13
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 38
+        width: 31
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94101e49bba7c88a0800000000000000
+      internalID: -6301526832522919607
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Flight_with_shadow_14
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 37
+        width: 30
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc3fde4cffe020980800000000000000
+      internalID: -8574274248876624949
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Flight_with_shadow_15
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 37
+        width: 29
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87151515edd7b0fc0800000000000000
+      internalID: -3527587489314156168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Flight_with_shadow_16
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 39
+        width: 28
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f344f55c5bdc7e60800000000000000
+      internalID: 7961479430909740018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Flight_with_shadow_17
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 40
+        width: 29
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 045f53a18ca348190800000000000000
+      internalID: -7961173610176580288
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Flight_with_shadow_18
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 7
+        width: 32
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc8bea69989a5c340800000000000000
+      internalID: 4883495779356817612
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Flight_with_shadow_19
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 6
+        width: 31
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9da3e75e9b98d0020800000000000000
+      internalID: 2309653615423142617
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Flight_with_shadow_20
+      rect:
+        serializedVersion: 2
+        x: 66
+        y: 5
+        width: 30
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bec69c5358a5fc3b0800000000000000
+      internalID: -5490069892561802005
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Flight_with_shadow_21
+      rect:
+        serializedVersion: 2
+        x: 99
+        y: 5
+        width: 29
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e3b74aa8b8794fe0800000000000000
+      internalID: -1204298690818755615
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Flight_with_shadow_22
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 7
+        width: 28
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1c5218e838402d5d0800000000000000
+      internalID: -3039361835443608127
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black_grouse_Flight_with_shadow_23
+      rect:
+        serializedVersion: 2
+        x: 163
+        y: 8
+        width: 29
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3fa52735abd15a690800000000000000
+      internalID: -7591628910761977101
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Black_grouse_Flight_with_shadow_0: -7004207912756426262
+      Black_grouse_Flight_with_shadow_1: -5244743433939452535
+      Black_grouse_Flight_with_shadow_10: -798477214999407052
+      Black_grouse_Flight_with_shadow_11: -4062155214180131924
+      Black_grouse_Flight_with_shadow_12: -6229904663055024291
+      Black_grouse_Flight_with_shadow_13: -6301526832522919607
+      Black_grouse_Flight_with_shadow_14: -8574274248876624949
+      Black_grouse_Flight_with_shadow_15: -3527587489314156168
+      Black_grouse_Flight_with_shadow_16: 7961479430909740018
+      Black_grouse_Flight_with_shadow_17: -7961173610176580288
+      Black_grouse_Flight_with_shadow_18: 4883495779356817612
+      Black_grouse_Flight_with_shadow_19: 2309653615423142617
+      Black_grouse_Flight_with_shadow_2: -2376152389815881754
+      Black_grouse_Flight_with_shadow_20: -5490069892561802005
+      Black_grouse_Flight_with_shadow_21: -1204298690818755615
+      Black_grouse_Flight_with_shadow_22: -3039361835443608127
+      Black_grouse_Flight_with_shadow_23: -7591628910761977101
+      Black_grouse_Flight_with_shadow_3: 5618567262117005379
+      Black_grouse_Flight_with_shadow_4: -1173731573225866083
+      Black_grouse_Flight_with_shadow_5: 8254121692566986157
+      Black_grouse_Flight_with_shadow_6: 7788688993628228290
+      Black_grouse_Flight_with_shadow_7: 6644963214011973740
+      Black_grouse_Flight_with_shadow_8: 9122284290746364213
+      Black_grouse_Flight_with_shadow_9: -3638593888954446068
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
