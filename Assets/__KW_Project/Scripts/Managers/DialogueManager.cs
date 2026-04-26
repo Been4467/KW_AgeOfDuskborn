@@ -30,6 +30,7 @@ namespace KW
 
         [SerializeField] private GameObject _INGAMECANVAS;
         [SerializeField] private GameObject _SYSTEMCANVAS;
+        [SerializeField] private GameObject _RESTCANVAS;
 
         // Queue 는 순차적으로 정보를 보여주는 형식의 List와 비슷한 것
         private Queue<string> _dialogueQueue;                           // 각 NPC 의 dialogue 를 보관할 Queue
@@ -80,6 +81,7 @@ namespace KW
             // <InGameUI> 와 <SystemCanvasUI> 형식의 오브젝트를 찾음. 비활성화되어있는 오브젝트까지 다 체크. gameObject로 선언되어있어서 .gameObject
             if (_INGAMECANVAS == null) _INGAMECANVAS = FindObjectOfType<InGameUI>(true).gameObject;
             if (_SYSTEMCANVAS == null) _SYSTEMCANVAS = FindObjectOfType<SystemCanvasUI>(true).gameObject;
+            if (_RESTCANVAS == null) _RESTCANVAS = FindObjectOfType<RestCanvasUI>(true).gameObject;
 
             // npcCanvas 가 존재할 시, npcCanvas의 각 변수 할당
             if (npcCanvas != null)
@@ -115,6 +117,12 @@ namespace KW
         public void RegisterIngameCanvas(GameObject canvasObj)
         {
             _INGAMECANVAS = canvasObj;
+        }
+
+        // DialogueMangaer에서 찾지 못했을 경우를 대비해, RelaxCanvasUI.cs 에서도 자체적으롣 등록할 수 있도록 하는 함수
+        public void RegisterRestCanvas(GameObject canvasObj)
+        {
+            _RESTCANVAS = canvasObj;
         }
 
         // DialogueMangaer에서 찾지 못했을 경우를 대비해, NpcCanvasUI.cs 에서도 자체적으롣 등록할 수 있도록 하는 함수
@@ -177,6 +185,7 @@ namespace KW
 
             _SYSTEMCANVAS.SetActive(false);
             _INGAMECANVAS.SetActive(false);
+            _RESTCANVAS.SetActive(false);
 
             // 게임 시간 정지 / 플레이어 정지
             Time.timeScale = 0.00001f;

@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4477933881663848769}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 47.832104, y: 6.428248, z: 22.43223}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -49,6 +49,8 @@ MonoBehaviour:
   inGameUIScript: {fileID: 0}
   systemCanvas: {fileID: 0}
   systemCanvasUIScript: {fileID: 0}
+  restCanvas: {fileID: 0}
+  restCanvasUIScript: {fileID: 0}
   uiPanels:
   - name: Inventory
     key: 105
@@ -71,6 +73,10 @@ MonoBehaviour:
     key: 0
     panelObject: {fileID: 0}
     isOpen: 0
+  isResting: 0
+  virtualCamera: {fileID: 0}
+  restingFOV: 19
+  normalFOV: 38
 --- !u!114 &8469988726022191005
 MonoBehaviour:
   m_ObjectHideFlags: 0

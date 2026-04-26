@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System;
 
 namespace KW
 {
@@ -13,7 +14,7 @@ namespace KW
         [Header("참조")]
         public InGameUI ingameUi;
 
-        [Header("팝업 설정")]   
+        [Header("팝업 설정")]
         [SerializeField] private GameObject itemLootPopupPrefab;                // 팝업 창 프리팹
 
         [SerializeField] private GameObject itemLootLinePrefab;                 // 아이템 1줄 프리팹
@@ -34,7 +35,7 @@ namespace KW
                 Destroy(gameObject);
             }
         }
-private void OnEnable()
+        private void OnEnable()
         {
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
@@ -54,7 +55,7 @@ private void OnEnable()
             {
                 ingameUi = FindObjectOfType<InGameUI>();
             }
-            
+
             FindPopupHolder();
         }
 
@@ -65,7 +66,7 @@ private void OnEnable()
             {
                 // "PopupHolder"라는 이름의 자식을 찾음
                 Transform holder = ingameUi.transform.Find("PopupHolder");
-                
+
                 // 만약 바로 아래 자식이 아니라면 전체 검색
                 if (holder == null)
                 {
@@ -82,10 +83,10 @@ private void OnEnable()
                 }
                 popupHolder = holder;
             }
-            
+
             if (popupHolder == null)
             {
-                 Debug.LogWarning("[NotificationManager] PopupHolder를 찾지 못했습니다.");
+                Debug.LogWarning("[NotificationManager] PopupHolder를 찾지 못했습니다.");
             }
         }
         void Start()
@@ -134,22 +135,22 @@ private void OnEnable()
                     text.text = $"{slot.item.itemName}이(가) x{slot.quantity}개 추가됐다.";
             }
 
-      
+
         }
         #endregion
 
         #region 일반 팝업
-        public void ShowMessage(string message)
+        public void ShowMessage(string message, Action onConfirm = null)
         {
             // 껍데기 생성
-            GameObject popupObj = CreatePopupBase();
+            GameObject popupObj = CreatePopupBase(onConfirm);
             Transform lineHolder = popupObj.transform.Find("LineHolder");
 
             // 내용물 채우기
             GameObject lineObj = Instantiate(messageLinePrefab, lineHolder);
 
             TextMeshProUGUI textComp = lineObj.GetComponentInChildren<TextMeshProUGUI>();
-            
+
             if (textComp != null)
             {
                 textComp.text = message;
@@ -160,14 +161,14 @@ private void OnEnable()
         #endregion
 
 
-        private GameObject CreatePopupBase()
+        private GameObject CreatePopupBase(Action onExternalConfirm = null)
         {
             Time.timeScale = 0.00001f; // 일시정지
 
-            
+
 
             GameObject popupObj = Instantiate(itemLootPopupPrefab, popupHolder);
-            
+
             // 닫기 버튼 공통 로직
             Button confirmBtn = popupObj.transform.Find("ConfirmBtn").GetComponent<Button>();
             if (confirmBtn != null)
@@ -175,10 +176,13 @@ private void OnEnable()
                 confirmBtn.onClick.AddListener(() =>
                 {
                     Time.timeScale = 1f; // 재개
+
+                    onExternalConfirm?.Invoke();
+
                     Destroy(popupObj);
                 });
             }
-            
+
             return popupObj;
         }
     }

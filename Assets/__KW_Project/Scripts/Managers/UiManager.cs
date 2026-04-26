@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Cinemachine;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -24,10 +26,20 @@ namespace KW
         public InGameUI inGameUIScript;
         [SerializeField] private GameObject systemCanvas;
         public SystemCanvasUI systemCanvasUIScript;
+        [SerializeField] private GameObject restCanvas;
+        public RestCanvasUI restCanvasUIScript;
 
         [SerializeField] private List<UiPanel> uiPanels;                // 각 (인벤/맵/설정/퀘스트) 패널을 담을 리스트
 
         [SerializeField] private UiPanel currentOpenPanel = null;
+
+        [Header("휴식 상태")]
+        public bool isResting = false;
+
+        [Header("카메라")]
+        [SerializeField] private CinemachineVirtualCamera virtualCamera;
+        [SerializeField] private float restingFOV = 19f;
+        [SerializeField] private float normalFOV = 38f;
 
         private void Awake()
         {
@@ -39,7 +51,7 @@ namespace KW
             else
             {
                 Destroy(gameObject);
-            }           
+            }
         }
 
         void OnEnable()
@@ -57,20 +69,27 @@ namespace KW
             InitializeUI();
         }
 
-      public void RegisterSystemCanvas(GameObject canvasObj)
+        public void RegisterSystemCanvas(GameObject canvasObj)
         {
             systemCanvas = canvasObj;
         }
-    
-    public void RegisterIngameCanvas(GameObject canvasObj)
-    {
-        ingameUi = canvasObj;
-    }
+
+        public void RegisterIngameCanvas(GameObject canvasObj)
+        {
+            ingameUi = canvasObj;
+        }
+
+        public void RegisterRestCanvas(GameObject canvasObj)
+        {
+            restCanvas = canvasObj;
+        }
+
         private void InitializeUI()
         {
             // 스크립트가 없으면 씬에서 찾기 (안전장치)
             if (inGameUIScript == null) inGameUIScript = FindObjectOfType<InGameUI>(true);
             if (systemCanvasUIScript == null) systemCanvasUIScript = FindObjectOfType<SystemCanvasUI>(true);
+            if (restCanvasUIScript == null) restCanvasUIScript = FindObjectOfType<RestCanvasUI>(true);
 
             // GameObject 연결 및 초기화
             if (inGameUIScript != null)
@@ -83,6 +102,12 @@ namespace KW
             {
                 systemCanvas = systemCanvasUIScript.gameObject;
                 systemCanvas.SetActive(true);
+            }
+
+            if (restCanvasUIScript != null)
+            {
+                restCanvas = restCanvasUIScript.gameObject;
+                restCanvas.SetActive(true);
             }
 
             // 패널들 초기화 (비활성화)
@@ -98,8 +123,9 @@ namespace KW
 
             if (ingameUi != null) ingameUi.SetActive(true);
             if (systemCanvas != null) systemCanvas.SetActive(false); // 평소엔 꺼둠
+            if (restCanvas != null) restCanvas.SetActive(true); // 평소엔 꺼둠
         }
-        
+
         private void Start()
         {
             if (inGameUIScript != null)
@@ -114,6 +140,14 @@ namespace KW
                 systemCanvas = systemCanvasUIScript.transform.gameObject;
                 systemCanvas.SetActive(true);
             }
+
+            if (restCanvasUIScript != null)
+            {
+                // Debug.Log("[UiManager] 휴식상태Ui 등록완료");
+                restCanvas = restCanvasUIScript.transform.gameObject;
+                restCanvas.SetActive(true);
+            }
+
             foreach (var panel in uiPanels)
             {
                 panel.panelObject.SetActive(false);                     // 패널 클래스를 가진 패널 각각 setActive(false)
@@ -121,6 +155,7 @@ namespace KW
             }
             ingameUi.SetActive(true);                                   // 게임 실행 시 인게임 캔버스 on
             systemCanvas.SetActive(false);                              // 게임 실행 시 시스템 캔버스 off
+            restCanvas.SetActive(false);                              // 게임 실행 시 휴식상태 캔버스 off
         }
 
         private void Update()
@@ -129,6 +164,8 @@ namespace KW
             {
                 return;
             }
+
+            if (isResting) return;
 
             if (currentOpenPanel != null && Input.GetKeyDown(KeyCode.Escape))   // 열려있는 게 있으면 우선적으로 닫음
             {
@@ -162,7 +199,7 @@ namespace KW
         private void UpdateAllPanelViews()
         {
             // currenOpenPanel 이 있거나, 외부 팝업창이 열려있으면 true
-            bool isAnyUiOpen = (currentOpenPanel != null);         
+            bool isAnyUiOpen = (currentOpenPanel != null);
 
             if (isAnyUiOpen)
             {
@@ -181,7 +218,7 @@ namespace KW
                 panel.isOpen = (panel == currentOpenPanel);             // 해당 panel 이 현재 열려있는 패널이면 isOpen
                 panel.panelObject.SetActive(panel.isOpen);              // isOpen 이 true 면 해당 패널 오브젝트 SetActive
             }
-            
+
             // OnAnyUiStateChanged?.Invoke(isAnyUiOpen);
         }
 
@@ -218,5 +255,29 @@ namespace KW
             // 루프가 끝날 때까지 찾지 못했다면 null을 반환합니다.
             return null;
         }
+
+        public void StartRest()
+        {
+            isResting = true;
+
+            ingameUi.SetActive(false);
+            restCanvas.SetActive(true);
+
+            OnAnyUiStateChanged?.Invoke(true);
+
+            restCanvasUIScript.DoFadeIn(() =>
+            {
+                if (virtualCamera != null)
+                    virtualCamera.m_Lens.FieldOfView = restingFOV;
+
+                Invoke(nameof(EndRest), 0.5f);
+            });
+        }
+
+        private void EndRest()
+        {
+            restCanvasUIScript.DoFadeOut(null);
+        }
+
     }
 }
