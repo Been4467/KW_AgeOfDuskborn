@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -6,6 +7,10 @@ namespace KW
     public class SystemCanvasUI : MonoBehaviour
     {
         public static SystemCanvasUI Instance { get; private set; }
+
+        [SerializeField] private GameObject fade;
+        [SerializeField] private GameObject restScreen;
+
         private void Awake()
         {
             if (Instance == null)
@@ -61,5 +66,22 @@ namespace KW
             // Debug.Log("[SystemCanvasUI] 매니저들에 재등록 완료");
         }
 
+        public void ToggleCanvas(bool canvasToToggle)
+        {
+            foreach (Transform child in this.transform)
+                child.gameObject.SetActive(canvasToToggle);
+        }
+
+        public void ToggleFade(bool fadeToToggle)
+        {
+            if (fade != null)
+                fade.SetActive(fadeToToggle);
+        }
+
+        public void ToggleRestScreen(bool restScreenToToggle)
+        {
+            if (restScreen != null)
+                restScreen.SetActive(restScreenToToggle);
+        }
     }
 }

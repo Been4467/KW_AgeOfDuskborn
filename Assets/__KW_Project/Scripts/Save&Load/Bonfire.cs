@@ -49,7 +49,7 @@ namespace KW
         private void EnterRestMode(GameObject player, PlayerMovement movement)
         {
             if (UiManager.Instance != null)
-                UiManager.Instance.StartRest();
+                UiManager.Instance.StartEnterRestMode();
 
             PlayerHealth health = player.GetComponent<PlayerHealth>();
             if (health != null)
@@ -60,7 +60,6 @@ namespace KW
 
             movement.SwitchState(movement.sitState);
         }
-
 
     }
 }

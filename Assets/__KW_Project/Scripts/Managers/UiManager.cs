@@ -26,8 +26,6 @@ namespace KW
         public InGameUI inGameUIScript;
         [SerializeField] private GameObject systemCanvas;
         public SystemCanvasUI systemCanvasUIScript;
-        [SerializeField] private GameObject restCanvas;
-        public RestCanvasUI restCanvasUIScript;
 
         [SerializeField] private List<UiPanel> uiPanels;                // 각 (인벤/맵/설정/퀘스트) 패널을 담을 리스트
 
@@ -35,6 +33,10 @@ namespace KW
 
         [Header("휴식 상태")]
         public bool isResting = false;
+
+        [Header("페이드")]
+        [SerializeField] private CanvasGroup fadeGroup;
+        [SerializeField] private float fadeDuration = 1.0f;
 
         [Header("카메라")]
         [SerializeField] private CinemachineVirtualCamera virtualCamera;
@@ -79,17 +81,11 @@ namespace KW
             ingameUi = canvasObj;
         }
 
-        public void RegisterRestCanvas(GameObject canvasObj)
-        {
-            restCanvas = canvasObj;
-        }
-
         private void InitializeUI()
         {
             // 스크립트가 없으면 씬에서 찾기 (안전장치)
             if (inGameUIScript == null) inGameUIScript = FindObjectOfType<InGameUI>(true);
             if (systemCanvasUIScript == null) systemCanvasUIScript = FindObjectOfType<SystemCanvasUI>(true);
-            if (restCanvasUIScript == null) restCanvasUIScript = FindObjectOfType<RestCanvasUI>(true);
 
             // GameObject 연결 및 초기화
             if (inGameUIScript != null)
@@ -102,12 +98,6 @@ namespace KW
             {
                 systemCanvas = systemCanvasUIScript.gameObject;
                 systemCanvas.SetActive(true);
-            }
-
-            if (restCanvasUIScript != null)
-            {
-                restCanvas = restCanvasUIScript.gameObject;
-                restCanvas.SetActive(true);
             }
 
             // 패널들 초기화 (비활성화)
@@ -123,7 +113,6 @@ namespace KW
 
             if (ingameUi != null) ingameUi.SetActive(true);
             if (systemCanvas != null) systemCanvas.SetActive(false); // 평소엔 꺼둠
-            if (restCanvas != null) restCanvas.SetActive(true); // 평소엔 꺼둠
         }
 
         private void Start()
@@ -141,13 +130,6 @@ namespace KW
                 systemCanvas.SetActive(true);
             }
 
-            if (restCanvasUIScript != null)
-            {
-                // Debug.Log("[UiManager] 휴식상태Ui 등록완료");
-                restCanvas = restCanvasUIScript.transform.gameObject;
-                restCanvas.SetActive(true);
-            }
-
             foreach (var panel in uiPanels)
             {
                 panel.panelObject.SetActive(false);                     // 패널 클래스를 가진 패널 각각 setActive(false)
@@ -155,7 +137,6 @@ namespace KW
             }
             ingameUi.SetActive(true);                                   // 게임 실행 시 인게임 캔버스 on
             systemCanvas.SetActive(false);                              // 게임 실행 시 시스템 캔버스 off
-            restCanvas.SetActive(false);                              // 게임 실행 시 휴식상태 캔버스 off
         }
 
         private void Update()
@@ -256,28 +237,85 @@ namespace KW
             return null;
         }
 
-        public void StartRest()
+        public void StartEnterRestMode()
         {
             isResting = true;
 
-            ingameUi.SetActive(false);
-            restCanvas.SetActive(true);
+            ingameUi.SetActive(!isResting);
+            systemCanvas.SetActive(isResting);
+
+            systemCanvasUIScript.ToggleCanvas(!isResting);
+            systemCanvasUIScript.ToggleFade(isResting);
 
             OnAnyUiStateChanged?.Invoke(true);
 
-            restCanvasUIScript.DoFadeIn(() =>
+            DoFadeIn(() =>
+             {
+                 if (virtualCamera != null)
+                     virtualCamera.m_Lens.FieldOfView = restingFOV;
+
+                 Invoke(nameof(EndEnterRestMode), 0.5f);
+             });
+        }
+
+        private void EndEnterRestMode()
+        {
+            systemCanvasUIScript.ToggleRestScreen(isResting);
+
+            DoFadeOut(null);
+        }
+
+        public void StartLeaveRestMode()
+        {
+            isResting = false;
+
+            systemCanvasUIScript.ToggleRestScreen(isResting);
+
+            DoFadeIn(() =>
             {
                 if (virtualCamera != null)
-                    virtualCamera.m_Lens.FieldOfView = restingFOV;
+                    virtualCamera.m_Lens.FieldOfView = normalFOV;
 
-                Invoke(nameof(EndRest), 0.5f);
+                Invoke(nameof(EndLeaveRestMode), 0.5f);
             });
         }
 
-        private void EndRest()
+        private void EndLeaveRestMode()
         {
-            restCanvasUIScript.DoFadeOut(null);
+            ingameUi.SetActive(!isResting);
+
+            DoFadeOut(() =>
+            {
+                systemCanvasUIScript.ToggleCanvas(isResting);
+                systemCanvasUIScript.ToggleFade(isResting);
+
+                OnAnyUiStateChanged?.Invoke(false);
+            });
         }
 
+        public void DoFadeIn(Action onComplete)
+        {
+            StopAllCoroutines();
+            StartCoroutine(FadeRoutine(0, 1, onComplete));
+        }
+
+        public void DoFadeOut(Action onComplete)
+        {
+            StopAllCoroutines();
+            StartCoroutine(FadeRoutine(1, 0, onComplete));
+        }
+
+        private IEnumerator FadeRoutine(float start, float end, Action onComplete)
+        {
+            float timer = 0;
+            while (timer < fadeDuration)
+            {
+                timer += Time.unscaledDeltaTime;
+                fadeGroup.alpha = Mathf.Lerp(start, end, timer / fadeDuration);
+                yield return null;
+            }
+            fadeGroup.alpha = end;
+            onComplete?.Invoke();
+        }
     }
 }
