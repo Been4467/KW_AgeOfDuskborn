@@ -191,7 +191,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ced040c87c3f2b4eaa3a7e52033cc4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BonfireID: 
+  BonfireID: Dock Bonfire
 --- !u!1 &47492932
 GameObject:
   m_ObjectHideFlags: 0
@@ -13043,7 +13043,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ced040c87c3f2b4eaa3a7e52033cc4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BonfireID: 
+  BonfireID: Forest road Bonfire
 --- !u!1 &1436783296
 GameObject:
   m_ObjectHideFlags: 0
