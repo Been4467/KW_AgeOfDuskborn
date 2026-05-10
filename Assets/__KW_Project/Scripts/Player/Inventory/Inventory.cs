@@ -24,6 +24,12 @@ namespace KW
             }
         }
 
+        private void OnDestroy()
+        {
+            OnInventoryChanged = null;
+            OnItemAdded = null;
+        }
+
         // 아이템이 한개일때만 AddItem(itemToAdd, amountToAdd) 호출
         public bool AddItem(Item itemToAdd)
         {

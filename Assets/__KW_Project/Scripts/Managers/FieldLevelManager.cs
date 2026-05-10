@@ -55,6 +55,11 @@ namespace KW
             if (Application.isPlaying) OnFieldLevelChanged(_fieldLevel);
         }
 
+        private void OnDestroy()
+        {
+            Instance = null;
+        }
+
         private void OnFieldLevelChanged(int newFieldLevel)
         {
             if (newFieldLevel < 0 || _multiplier < 0f) return;

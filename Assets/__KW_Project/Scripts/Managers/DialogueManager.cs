@@ -66,6 +66,11 @@ namespace KW
             SceneManager.sceneLoaded -= OnSceneLoaded;
         }
 
+        private void OnDestroy()
+        {
+            Instance = null;
+        }
+
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {

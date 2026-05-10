@@ -49,6 +49,11 @@ namespace KW
             }
         }
 
+        private void OnDestroy()
+        {
+            Instance = null;
+        }
+
         private void InitializePools()
         {
             foreach (var data in vfxList)

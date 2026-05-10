@@ -109,6 +109,14 @@ namespace KW
             }
         }
 
+        private void OnDestroy()
+        {
+            OnTrackListUpdated = null;
+            OnQuestListUpdated = null;
+
+            Instance = null;
+        }
+
         // 퀘스트 수락 함수 (NPC에서 호출)
         public void AcceptQuest(QuestSO questData)
         {

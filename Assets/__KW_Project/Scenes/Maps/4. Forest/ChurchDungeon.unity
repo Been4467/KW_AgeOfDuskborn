@@ -2165,6 +2165,14 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1444776084}
+    - target: {fileID: 2741981802153898008, guid: d678b16c60f055243a00bdf4e96b180d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1658408332}
+    - target: {fileID: 2741981802153898008, guid: d678b16c60f055243a00bdf4e96b180d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: StartGameMode
+      objectReference: {fileID: 0}
     - target: {fileID: 3392883610960831352, guid: d678b16c60f055243a00bdf4e96b180d, type: 3}
       propertyPath: m_AnchorMax.x
       value: 1
@@ -2308,6 +2316,16 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 491514902}
   m_SourcePrefab: {fileID: 100100000, guid: d678b16c60f055243a00bdf4e96b180d, type: 3}
+--- !u!225 &325983323 stripped
+CanvasGroup:
+  m_CorrespondingSourceObject: {fileID: 3092488512308080984, guid: d678b16c60f055243a00bdf4e96b180d, type: 3}
+  m_PrefabInstance: {fileID: 325983322}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &325983324 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3745289148433815685, guid: d678b16c60f055243a00bdf4e96b180d, type: 3}
+  m_PrefabInstance: {fileID: 325983322}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &334231964
 GameObject:
   m_ObjectHideFlags: 0
@@ -15064,6 +15082,26 @@ PrefabInstance:
       value: UiManager
       objectReference: {fileID: 0}
     - target: {fileID: 8254192834739439423, guid: 6c6e8a0520e5280489e3678f3ed6996d, type: 3}
+      propertyPath: fadeGroup
+      value: 
+      objectReference: {fileID: 325983323}
+    - target: {fileID: 8254192834739439423, guid: 6c6e8a0520e5280489e3678f3ed6996d, type: 3}
+      propertyPath: virtualCamera
+      value: 
+      objectReference: {fileID: 579180705}
+    - target: {fileID: 8254192834739439423, guid: 6c6e8a0520e5280489e3678f3ed6996d, type: 3}
+      propertyPath: uiPanels.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8254192834739439423, guid: 6c6e8a0520e5280489e3678f3ed6996d, type: 3}
+      propertyPath: uiPanels.Array.data[4].key
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8254192834739439423, guid: 6c6e8a0520e5280489e3678f3ed6996d, type: 3}
+      propertyPath: uiPanels.Array.data[4].name
+      value: Rest
+      objectReference: {fileID: 0}
+    - target: {fileID: 8254192834739439423, guid: 6c6e8a0520e5280489e3678f3ed6996d, type: 3}
       propertyPath: uiPanels.Array.data[0].panelObject
       value: 
       objectReference: {fileID: 438314754}
@@ -15079,6 +15117,10 @@ PrefabInstance:
       propertyPath: uiPanels.Array.data[3].panelObject
       value: 
       objectReference: {fileID: 1273203730}
+    - target: {fileID: 8254192834739439423, guid: 6c6e8a0520e5280489e3678f3ed6996d, type: 3}
+      propertyPath: uiPanels.Array.data[4].panelObject
+      value: 
+      objectReference: {fileID: 325983324}
     - target: {fileID: 8469988726022191005, guid: 6c6e8a0520e5280489e3678f3ed6996d, type: 3}
       propertyPath: healthText
       value: 
@@ -15136,6 +15178,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6c6e8a0520e5280489e3678f3ed6996d, type: 3}
+--- !u!114 &1658408332 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8254192834739439423, guid: 6c6e8a0520e5280489e3678f3ed6996d, type: 3}
+  m_PrefabInstance: {fileID: 1658408331}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afc5a5b0832fb464280ecd52626b2f11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1659565594 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3591644860445115680, guid: a55e8b944b49e774899ecb13192840e5, type: 3}
@@ -19784,6 +19837,8 @@ BoxCollider:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 1370304988}
+  - {fileID: 579180706}
   - {fileID: 1298206033}
   - {fileID: 1636428786}
   - {fileID: 89230233}
@@ -19793,16 +19848,14 @@ SceneRoots:
   - {fileID: 1563588353}
   - {fileID: 651862075}
   - {fileID: 325983322}
+  - {fileID: 1171219733}
+  - {fileID: 1106382224}
   - {fileID: 1255078660}
   - {fileID: 1154402123}
-  - {fileID: 1171219733}
   - {fileID: 1834141729}
-  - {fileID: 1106382224}
   - {fileID: 247302496}
   - {fileID: 865485517}
   - {fileID: 1658408331}
   - {fileID: 732650921}
-  - {fileID: 579180706}
-  - {fileID: 1370304988}
   - {fileID: 80195309}
   - {fileID: 980384734}

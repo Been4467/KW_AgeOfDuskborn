@@ -40,7 +40,7 @@ namespace KW
             movement.gameObject.layer = originalLayer;
             // 부활 시스템을 위한 강제 초기화
             movement.canMove = true;
-            movement.anim.ResetTrigger("Die");
+            //movement.anim.ResetTrigger("Die");
             movement.anim.Play("Idle"); // 강제 복귀            
         }
     }

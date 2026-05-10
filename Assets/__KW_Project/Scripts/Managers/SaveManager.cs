@@ -4,6 +4,10 @@ using UnityEngine;
 using System.IO;
 using UnityEngine.SceneManagement;
 using Unity.VisualScripting;
+using System;
+using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
+
+
 
 
 #if UNITY_EDITOR
@@ -14,7 +18,25 @@ namespace KW
 {
     public class SaveManager : MonoBehaviour
     {
-        public static SaveManager Instance { get; private set; }
+        private static SaveManager _instance;
+        public static SaveManager Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = GameObject.FindAnyObjectByType<SaveManager>();
+
+                    if (_instance == null)
+                    {
+                        Debug.LogError("씬에 SaveManager가 존재하지 않습니다!");
+                    }
+                }
+                return _instance;
+            }
+        }
+
+        public static event Action OnLoadGame;           // 게임이 로드되었을 때 호출 되는 이벤트 (PlayerMovement에서구독함)
 
         [Header("참조")]
         public PlayerMovement player;
@@ -35,9 +57,9 @@ namespace KW
 
         private void Awake()
         {
-            if (Instance == null)
+            if (_instance == null)
             {
-                Instance = this;
+                _instance = this;
                 DontDestroyOnLoad(gameObject);
             }
             else
@@ -46,6 +68,14 @@ namespace KW
             }
 
             savePath = Application.persistentDataPath + "/saveGame.json";                   // 저장될 주소 지정
+        }
+
+        private void OnDestroy()
+        {
+            // 이벤트 구독자 전체 해제
+            OnLoadGame = null;
+
+            _instance = null;
         }
 
         public void SaveGame()
@@ -171,6 +201,7 @@ namespace KW
             if (!File.Exists(savePath))
             {
                 Debug.LogError("저장된 파일이 없습니다");
+                ResetGame();
                 return;
             }
 
@@ -280,6 +311,7 @@ namespace KW
 
             Debug.Log("Game Loaded , Scene" + data.sceneName);
 
+            OnLoadGame.Invoke();
         }
 
         public void DisplayBtn()
@@ -301,6 +333,76 @@ namespace KW
                 Item item = ItemDataBase.Instance.GetItemId(data.itemId);
                 if (item != null) slot.EquipItem(item);
             }
+        }
+
+        private void DeleteGame()
+        {
+            if (File.Exists(savePath))
+            {
+                try
+                {
+                    File.Delete(savePath);
+                    Debug.Log("세이브 파일이 성공적으로 삭제되었습니다: " + savePath);
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError("파일 삭제 중 오류 발생: " + e.Message);
+                }
+            }
+            else
+            {
+                Debug.LogWarning("삭제할 세이브 파일이 존재하지 않습니다.");
+            }
+        }
+
+
+        public void ResetGame()
+        {
+            DeleteGame();
+
+            if (Instance != null)
+                Destroy(Instance.gameObject);
+
+            if (FieldLevelManager.Instance != null)
+                Destroy(FieldLevelManager.Instance.gameObject);
+
+            if (InGameUI.Instance != null)
+                Destroy(InGameUI.Instance.gameObject);
+
+            if (VfxManager.Instance != null)
+                Destroy(VfxManager.Instance.gameObject);
+
+            if (VfxManager.Instance != null)
+                Destroy(UiManager.Instance.gameObject);
+
+            if (DialogueManager.Instance != null)
+                Destroy(DialogueManager.Instance.gameObject);
+
+            if (DuskbornSceneManager.Instance != null)
+                Destroy(DuskbornSceneManager.Instance.gameObject);
+
+            if (ItemDataBase.Instance != null)
+                Destroy(ItemDataBase.Instance.gameObject);
+
+            if (MonsterDataParsing.Instance != null)
+                Destroy(MonsterDataParsing.Instance.gameObject);
+
+            if (NotificationManager.Instance != null)
+                Destroy(NotificationManager.Instance.gameObject);
+
+            if (NpcCanvasUI.Instance != null)
+                Destroy(NpcCanvasUI.Instance.gameObject);
+
+            if (PlayerSceneConnector.Instance != null)
+                Destroy(PlayerSceneConnector.Instance.gameObject);
+
+            if (QuestManager.Instance != null)
+                Destroy(QuestManager.Instance.gameObject);
+
+            if (SystemCanvasUI.Instance != null)
+                Destroy(SystemCanvasUI.Instance.gameObject);
+
+            SceneManager.LoadScene(0);
         }
 
         public void ExitBtn()

@@ -27,12 +27,17 @@ namespace KW
             ConnectToSceneComponents();
         }
 
-      /*   private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        private void OnDestroy()
         {
-            if (scene.name == "LoadingScene") return;
+            Instance = null;
+        }
 
-            // ConnectToSceneComponents();
-        } */
+        /*   private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+          {
+              if (scene.name == "LoadingScene") return;
+
+              // ConnectToSceneComponents();
+          } */
 
         public void ConnectToSceneComponents()
         {

@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using static UnityEngine.Rendering.DebugUI;
 
 namespace KW
 {
@@ -11,6 +12,10 @@ namespace KW
         [Header("데이터파싱")]
         [TextArea(10, 1)]
         public string DataParsingFrom;
+
+        [Header("세이브")]
+        public int saveCount = 0;                         // 세이브 가능한 횟수               
+        public int limitedSaveCount = 5;                         // 세이브 유효 횟수               
 
         [Header("움직임")]
         public float walkSpeed = 3f;                         // 걷는 속도                    
@@ -99,11 +104,17 @@ namespace KW
         void OnEnable()
         {
             UiManager.OnAnyUiStateChanged += HandleUiStateChanged;
+            UiManager.OnDeathed += HandleDeathed;
+
+            SaveManager.OnLoadGame += HandleLoadGame;
         }
 
         void OnDisable()
         {
             UiManager.OnAnyUiStateChanged -= HandleUiStateChanged;
+            UiManager.OnDeathed -= HandleDeathed;
+
+            SaveManager.OnLoadGame -= HandleLoadGame;
 
             if (playerHealth != null)
             {
@@ -115,6 +126,34 @@ namespace KW
         private void HandleUiStateChanged(bool isAnyUiOpen)
         {
             canMove = !isAnyUiOpen;
+        }
+
+        private void HandleDeathed()
+        {
+            Debug.Log("[PlayerMovement] HandleDeathed");
+
+            SaveManager manager = SaveManager.Instance;
+            if (manager != null)
+            {
+                Debug.Log($"[감시] saveCount 현재 값: {saveCount}");
+
+                if (saveCount >= limitedSaveCount)
+                {
+                    Debug.Log("[PlayerMovement] Limit reached. Resetting Game.");
+                    manager.ResetGame();
+                    return;
+                }
+
+                saveCount++;
+                manager.LoadGame();
+            }
+            else
+                Debug.LogError("[PlayerMovement] Critical Error: SaveManager object is missing in the scene!");
+        }
+
+        private void HandleLoadGame()
+        {
+            SwitchState(playerIdle);
         }
 
         private bool IsPointerOverUIObject()
@@ -401,6 +440,16 @@ namespace KW
             {
                 SaveManager.Instance.SaveGame();
                 //Debug.Log("화톳불에 앉아 게임을 저장했습니다.");
+            }
+        }
+
+        [Tooltip("애니메이션 이벤트 : 사망 애니메이션 종료")]
+        public void AnimationEvent_DeathFinished()
+        {
+            if (UiManager.Instance != null)
+            {
+                // Debug.Log("[UiManager] StartResponse");
+                UiManager.Instance.StartResponse();
             }
         }
 

@@ -26,6 +26,11 @@ namespace KW
             }
         }
 
+        private void OnDestroy()
+        {
+            Instance = null;
+        }
+
         // 외부(포탈)에서 이 함수를 호출합니다.
         public void LoadScene(string sceneName, int spawnID)
         {

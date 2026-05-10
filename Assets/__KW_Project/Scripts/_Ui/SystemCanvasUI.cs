@@ -8,8 +8,8 @@ namespace KW
     {
         public static SystemCanvasUI Instance { get; private set; }
 
-        [SerializeField] private GameObject fade;
-        [SerializeField] private GameObject restScreen;
+        [SerializeField] private GameObject gameMode;
+        [SerializeField] private GameObject restMode;
 
         private void Awake()
         {
@@ -45,6 +45,11 @@ namespace KW
             SceneManager.sceneLoaded -= OnSceneLoaded;
         }
 
+        private void OnDestroy()
+        {
+            Instance = null;
+        }
+
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             RegisterToManagers();
@@ -66,22 +71,16 @@ namespace KW
             // Debug.Log("[SystemCanvasUI] 매니저들에 재등록 완료");
         }
 
-        public void ToggleCanvas(bool canvasToToggle)
+        public void ToggleGameMode(bool gameModeToToggle)
         {
-            foreach (Transform child in this.transform)
-                child.gameObject.SetActive(canvasToToggle);
+            if (gameMode != null)
+                gameMode.SetActive(gameModeToToggle);
         }
 
-        public void ToggleFade(bool fadeToToggle)
+        public void ToggleRestMode(bool restModeToToggle)
         {
-            if (fade != null)
-                fade.SetActive(fadeToToggle);
-        }
-
-        public void ToggleRestScreen(bool restScreenToToggle)
-        {
-            if (restScreen != null)
-                restScreen.SetActive(restScreenToToggle);
+            if (restMode != null)
+                restMode.SetActive(restModeToToggle);
         }
     }
 }

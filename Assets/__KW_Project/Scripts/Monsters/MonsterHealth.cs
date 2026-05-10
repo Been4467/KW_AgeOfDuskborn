@@ -29,6 +29,14 @@ namespace KW
             OnHealthChanged?.Invoke(_currentHp, _maxHp);
         }
 
+        private void OnDestroy()
+        {
+            // 이벤트 구독자 전체 해제
+            OnHit = null;
+            OnDeath = null;
+            OnHealthChanged = null;
+        }
+
         public virtual void InitializeHealth(float parsedMaxHp)
         {
             _baseHp = parsedMaxHp;

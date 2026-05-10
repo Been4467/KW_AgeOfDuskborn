@@ -49,8 +49,6 @@ MonoBehaviour:
   inGameUIScript: {fileID: 0}
   systemCanvas: {fileID: 0}
   systemCanvasUIScript: {fileID: 0}
-  restCanvas: {fileID: 0}
-  restCanvasUIScript: {fileID: 0}
   uiPanels:
   - name: Inventory
     key: 105
@@ -73,7 +71,9 @@ MonoBehaviour:
     key: 0
     panelObject: {fileID: 0}
     isOpen: 0
-  isResting: 0
+  isRestMode: 0
+  fadeGroup: {fileID: 0}
+  fadeDuration: 1
   virtualCamera: {fileID: 0}
   restingFOV: 19
   normalFOV: 38

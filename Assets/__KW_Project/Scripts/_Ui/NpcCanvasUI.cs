@@ -44,6 +44,11 @@ private void OnEnable()
             SceneManager.sceneLoaded -= OnSceneLoaded;
         }
 
+        private void OnDestroy()
+        {
+            Instance = null;
+        }
+
         // 씬 로딩이 끝나면 무조건 실행됨 -> 다시 등록!
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {

@@ -22,6 +22,7 @@ namespace KW
                 Debug.LogError("PlayerMovement 를 찾을 수 없음");
             }
         }
+
         private void Start()
         {
             // Debug.Log("상호작용 ray 색 : Blue, 실패 시 생상 : Red");

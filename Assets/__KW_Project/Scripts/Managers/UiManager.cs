@@ -21,6 +21,7 @@ namespace KW
         public static UiManager Instance { get; private set; }
 
         public static event Action<bool> OnAnyUiStateChanged;           // 패널이 열고 닫을 때 호출 되는 이벤트 (PlayerMovement에서구독함)
+        public static event Action OnDeathed;           // 죽었을 때 호출 되는 이벤트 (PlayerMovement에서구독함)
 
         [SerializeField] private GameObject ingameUi;
         public InGameUI inGameUIScript;
@@ -32,7 +33,10 @@ namespace KW
         [SerializeField] private UiPanel currentOpenPanel = null;
 
         [Header("휴식 상태")]
-        public bool isResting = false;
+        public bool isRestMode = false;
+
+        [Header("부활 상태")]
+        public bool isResponseMode = false;
 
         [Header("페이드")]
         [SerializeField] private CanvasGroup fadeGroup;
@@ -54,6 +58,13 @@ namespace KW
             {
                 Destroy(gameObject);
             }
+        }
+
+        private void OnDestroy()
+        {
+            // 이벤트 구독자 전체 해제
+            OnAnyUiStateChanged = null;
+            OnDeathed = null;
         }
 
         void OnEnable()
@@ -146,7 +157,7 @@ namespace KW
                 return;
             }
 
-            if (isResting) return;
+            if (isResponseMode || isRestMode) return;
 
             if (currentOpenPanel != null && Input.GetKeyDown(KeyCode.Escape))   // 열려있는 게 있으면 우선적으로 닫음
             {
@@ -237,15 +248,13 @@ namespace KW
             return null;
         }
 
-        public void StartEnterRestMode()
+        public void StartRestMode()
         {
-            isResting = true;
+            isRestMode = true;
 
-            ingameUi.SetActive(!isResting);
-            systemCanvas.SetActive(isResting);
-
-            systemCanvasUIScript.ToggleCanvas(!isResting);
-            systemCanvasUIScript.ToggleFade(isResting);
+            ingameUi.SetActive(!isRestMode);
+            systemCanvas.SetActive(isRestMode);
+            systemCanvasUIScript.ToggleGameMode(!isRestMode);
 
             OnAnyUiStateChanged?.Invoke(true);
 
@@ -254,42 +263,69 @@ namespace KW
                  if (virtualCamera != null)
                      virtualCamera.m_Lens.FieldOfView = restingFOV;
 
-                 Invoke(nameof(EndEnterRestMode), 0.5f);
+                 Invoke(nameof(EndRestMode), 0.5f);
              });
         }
 
-        private void EndEnterRestMode()
+        private void EndRestMode()
         {
-            systemCanvasUIScript.ToggleRestScreen(isResting);
+            systemCanvasUIScript.ToggleRestMode(isRestMode);
 
             DoFadeOut(null);
         }
 
-        public void StartLeaveRestMode()
+        public void StartGameMode()
         {
-            isResting = false;
+            isRestMode = false;
 
-            systemCanvasUIScript.ToggleRestScreen(isResting);
+            systemCanvasUIScript.ToggleRestMode(isRestMode);
 
             DoFadeIn(() =>
             {
                 if (virtualCamera != null)
                     virtualCamera.m_Lens.FieldOfView = normalFOV;
 
-                Invoke(nameof(EndLeaveRestMode), 0.5f);
+                Invoke(nameof(EndGameMode), 0.5f);
             });
         }
 
-        private void EndLeaveRestMode()
+        private void EndGameMode()
         {
-            ingameUi.SetActive(!isResting);
+            ingameUi.SetActive(!isRestMode);
+            systemCanvas.SetActive(isRestMode);
+            systemCanvasUIScript.ToggleGameMode(!isRestMode);
 
             DoFadeOut(() =>
             {
-                systemCanvasUIScript.ToggleCanvas(isResting);
-                systemCanvasUIScript.ToggleFade(isResting);
-
                 OnAnyUiStateChanged?.Invoke(false);
+            });
+        }
+
+        public void StartResponse()
+        {
+            isResponseMode = true;
+
+            systemCanvas.SetActive(isResponseMode);
+            systemCanvasUIScript.ToggleGameMode(!isResponseMode);
+
+            DoFadeIn(() =>
+            {
+                Invoke(nameof(EndResponse), 0.5f);
+            });
+        }
+
+        private void EndResponse()
+        {
+            OnDeathed.Invoke();
+
+            DoFadeOut(() =>
+            {
+                Debug.Log("[UiManager] EndResponse");
+
+                isResponseMode = false;
+
+                systemCanvas.SetActive(isRestMode);
+                systemCanvasUIScript.ToggleGameMode(!isRestMode);
             });
         }
 

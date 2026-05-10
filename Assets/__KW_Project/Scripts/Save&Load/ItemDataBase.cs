@@ -36,6 +36,11 @@ namespace KW
             }
         }
 
+        private void OnDestroy()
+        {
+            Instance = null;
+        }
+
         // Item의 Id 를 불러오는 함수
         public Item GetItemId(string id)
         {

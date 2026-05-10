@@ -36,6 +36,11 @@ namespace KW
             LoadMonsterData();
         }
 
+        private void OnDestroy()
+        {
+            Instance = null;
+        }
+
         private void LoadMonsterData()
         {
             TextAsset monsterDataCsv = Resources.Load<TextAsset>("MonsterDataParsing");
