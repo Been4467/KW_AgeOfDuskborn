@@ -15,7 +15,7 @@ namespace KW
 
         [Header("세이브")]
         public int saveCount = 0;                         // 세이브 가능한 횟수               
-        public int limitedSaveCount = 5;                         // 세이브 유효 횟수               
+        public int limitedSaveCount = 5;                  // 세이브 유효 횟수               
 
         [Header("움직임")]
         public float walkSpeed = 3f;                         // 걷는 속도                    
@@ -24,6 +24,9 @@ namespace KW
         public float xInput, zInput;
         public float lastMoveX, lastMoveZ;
         public bool isAttacking = false;
+
+        private float baseWalkSpeed = 3f;
+        private float baseRunSpeed = 5f;
 
         private bool _isSitting = false;
         public bool isSitting
@@ -38,6 +41,63 @@ namespace KW
                     Debug.Log($"[감시] isSitting 값이 변경됨: {_isSitting} -> {value}\n{System.Environment.StackTrace}");
                 }
                 _isSitting = value;
+            }
+        }
+
+        // 인스펙터에서 개별 항목으로 확인 및 디버깅이 가능하도록 직렬화 구조체 정의
+        [System.Serializable]
+        public struct FatigueTriggerFlags
+        {
+            public bool over20;
+            public bool over50;
+            public bool over80;
+            public bool over100;
+
+            public void Reset()
+            {
+                over20 = false;
+                over50 = false;
+                over80 = false;
+                over100 = false;
+            }
+        }
+
+        [Header("피로도")]
+        private bool _beingChased = false;
+        public bool beingChased
+        {
+            get { return _beingChased; }
+            set
+            {
+                // 값이 바뀔 때만 로그 찍기
+                if (_beingChased != value)
+                {
+                    // 누가 바꿨는지 추적하기 위해 스택 트레이스 출력
+                    Debug.Log($"[감시] beingChased 값이 변경됨: {_beingChased} -> {value}\n{System.Environment.StackTrace}");
+                }
+                _beingChased = value;
+            }
+        }
+
+        private int chasingMonsterCount = 0;
+
+        [SerializeField] private FatigueTriggerFlags fatigueTriggers; // ◀ 이제 인스펙터창에서 체크박스로 확인 가능합니다.
+        public float currentStatModifier { get; private set; } = 1.0f;
+
+        [SerializeField] private int maxFatigue = 100;
+        [SerializeField] private int _fatigue = 0;
+        public int Fatigue
+        {
+            get => _fatigue;
+            set
+            {
+                int clampedValue = Mathf.Clamp(value, 0, maxFatigue);
+                if (_fatigue == clampedValue) return;
+
+                _fatigue = clampedValue;
+                Debug.Log($"[피로도 변경] 현재 피로도: {_fatigue}");
+
+                HandleFatigueEvents(_fatigue);
             }
         }
 
@@ -97,7 +157,6 @@ namespace KW
         public PlayerSitState sitState = new PlayerSitState();
         public PlayerHealState healState = new PlayerHealState();
 
-
         #endregion
 
         #region Ui 에 따른 상태
@@ -123,9 +182,181 @@ namespace KW
             }
         }
 
+        private void Awake()
+        {
+            sr = GetComponent<SpriteRenderer>();
+            cController = GetComponent<CharacterController>();
+            anim = GetComponent<Animator>();
+
+            playerHealth = GetComponent<PlayerHealth>();
+            if (playerHealth == null)
+            {
+                Debug.LogError("[PlayerMovement] playeHealth 를 찾지 못함");
+            }
+            else
+            {
+                Debug.Log("[PlayerMovement] playeHealth 를 찾음");
+            }
+
+            LoadStatsFromJson();
+
+            if (attackHitBox != null)
+            {
+                attackHitBox.SetActive(false);
+            }
+        }
+
+        private void Start()
+        {
+            if (SaveManager.Instance != null)
+            {
+                SaveManager.Instance.player = this;
+            }
+
+            DontDestroyOnLoad(this);
+
+            SwitchState(playerIdle);
+
+            if (playerHealth != null)
+            {
+                playerHealth.OnPlayerHit += HandleHit;
+                playerHealth.OnPlayerDied += HandleDeath;
+            }
+
+            //beingChased = true;
+        }
+
+        private void Update()
+        {
+            if (DialogueManager.isDialogueActive) { return; }
+            if (!canMove) { return; }
+            if (isDashing) { return; }
+
+            _isGrounded = IsGrounded();
+            Gravity();
+
+            if (!isAttacking && !isSitting)
+            {
+                PlayerMove();
+                HandleSpriteFlip();
+            }
+
+            if (Input.GetMouseButtonDown(0) && IsGrounded() && !isAttacking)
+            {
+                if (IsPointerOverUIObject())
+                {
+                    Debug.Log("UI 위에 마우스가 있어서 공격 입력을 무시합니다.");
+                    return;
+                }
+                if (playerHealth == null)
+                {
+                    Debug.LogError("[PlayerMovement] PlayerHealth 를 찾을 수 없음");
+                }
+                if (playerHealth.hasWeapon == false)
+                {
+                    Debug.Log("플레이어가 무기가 없음");
+                    return;
+                }
+
+                previousState = currentState;
+                SwitchState(playerAttack);
+                return;
+            }
+            anim.SetFloat("lastMoveX", lastMoveX);
+            anim.SetFloat("lastMoveZ", lastMoveZ);
+
+            if (Input.GetKeyDown(KeyCode.R) && !isAttacking && !isDashing)
+            {
+                TryUsePotion();
+            }
+            currentState.UpdateState(this);
+        }
+
         private void HandleUiStateChanged(bool isAnyUiOpen)
         {
             canMove = !isAnyUiOpen;
+        }
+
+        // 기존의 enum 배열 판정 로직을 새 구조체 플래그에 맞게 수정했습니다.
+        private void HandleFatigueEvents(int value)
+        {
+            if (value >= 100 && !fatigueTriggers.over100)
+            {
+                fatigueTriggers.over100 = true;
+                currentStatModifier = 0.0f;
+                Debug.Log("피로도 100 도달! 플레이어가 쓰러집니다.");
+                ApplyStatModifier();
+                HandleDeath();
+                return;
+            }
+
+            if (value >= 80 && !fatigueTriggers.over80)
+            {
+                fatigueTriggers.over80 = true;
+                currentStatModifier = 0.5f;
+                Debug.Log("피로도 80 돌파! 공격력/이동속도 50% 하락");
+                ApplyStatModifier();
+            }
+            else if (value >= 50 && value < 80 && !fatigueTriggers.over50)
+            {
+                fatigueTriggers.over50 = true;
+                currentStatModifier = 0.75f;
+                Debug.Log("피로도 50 돌파! 공격력/이동속도 25% 하락");
+                ApplyStatModifier();
+            }
+            else if (value >= 20 && value < 50 && !fatigueTriggers.over20)
+            {
+                fatigueTriggers.over20 = true;
+                currentStatModifier = 0.9f;
+                Debug.Log("피로도 20 돌파! 공격력/이동속도 10% 하락");
+                ApplyStatModifier();
+            }
+        }
+
+        private void ApplyStatModifier()
+        {
+            // 1. 이동 속도 차감 적용
+            walkSpeed = baseWalkSpeed * currentStatModifier;
+            runSpeed = baseRunSpeed * currentStatModifier;
+
+            // FSM 상태 스크립트가 실시간으로 변경된 속도를 인지할 수 있도록 현재 속도 갱신 유도
+            if (currentState == playerWalk) currentSpeed = walkSpeed;
+            else if (currentState == playerRun) currentSpeed = runSpeed;
+
+            // 2. 공격력 차감 적용 (PlayerHealth 컴포넌트 연동)
+            if (playerHealth != null)
+            {
+                // PlayerHealth 측에 배율(currentStatModifier)을 넘겨주어 공격력을 계산하게 합니다.
+                playerHealth.UpdateDamageModifier(currentStatModifier);
+            }
+
+            Debug.Log($"[스탯 조정 완료] 현재 속도 배율: {currentStatModifier * 100}% | Walk: {walkSpeed}, Run: {runSpeed}");
+        }
+
+        public void ResetFatigueSystem()
+        {
+            _fatigue = 0;
+            currentStatModifier = 1.0f;
+
+            fatigueTriggers.Reset();
+
+            ApplyStatModifier();
+        }
+
+        public void RegisterChaser()
+        {
+            chasingMonsterCount++;
+            beingChased = (chasingMonsterCount > 0);
+            Debug.Log($"[추격 등록] 현재 추격 중인 몬스터 수: {chasingMonsterCount} | beingChased: {beingChased}");
+        }
+
+        public void UnregisterChaser()
+        {
+            chasingMonsterCount--;
+            if (chasingMonsterCount < 0) chasingMonsterCount = 0;
+
+            beingChased = (chasingMonsterCount > 0);
+            Debug.Log($"[추격 해제] 현재 추격 중인 몬스터 수: {chasingMonsterCount} | beingChased: {beingChased}");
         }
 
         private void HandleDeathed()
@@ -158,20 +389,15 @@ namespace KW
 
         private bool IsPointerOverUIObject()
         {
-            // 현재 활성화된 EventSystem이 없으면 false 반환
             if (EventSystem.current == null) return false;
 
-            // 현재 마우스 포인터의 데이터를 가져옴
             PointerEventData eventData = new PointerEventData(EventSystem.current);
             eventData.position = Input.mousePosition;
 
-            // UI 레이캐스트를 저장할 리스트
             var results = new System.Collections.Generic.List<RaycastResult>();
 
-            // EventSystem을 통해 UI 요소에 레이캐스트 수행 
             EventSystem.current.RaycastAll(eventData, results);
 
-            // 결과 리스트에 UI 요소가 하나라도 있으면 true
             return results.Count > 0;
         }
         #endregion
@@ -179,25 +405,24 @@ namespace KW
         [Tooltip("데이터 파싱")]
         private void LoadStatsFromJson()
         {
-            // json 파일을 text 로서 읽어옴
             TextAsset playerStatFile = Resources.Load<TextAsset>("playerStats");
 
             if (playerStatFile != null)
             {
-                // 읽어온 json의 내용을 PlayerStats 에 적용시키고, 현재 스크립트에도 적용
                 PlayerStats stats = JsonUtility.FromJson<PlayerStats>(playerStatFile.text);
 
-                this.walkSpeed = stats.walkSpeed;
-                this.runSpeed = stats.runSpeed;
-                // this.baseDamage = stats.baseDamage; 
-                // this.maxHp = stats.maxHp;
+                // ◀ [수정] JSON에서 로드한 순수 기본 속도를 원본 변수에 백업
+                this.baseWalkSpeed = stats.walkSpeed;
+                this.baseRunSpeed = stats.runSpeed;
+
+                // 인스펙터 및 이동 처리에 사용될 변수 초기화
+                this.walkSpeed = baseWalkSpeed;
+                this.runSpeed = baseRunSpeed;
 
                 if (playerHealth != null)
                 {
                     playerHealth.InitializeHealth(stats.maxHp, stats.baseDamage);
                 }
-
-                // Debug.Log("플레이어 기본 스탯 로드 완료 : maxHP(" + stats.maxHp + ")" + " , baseDamage(" + baseDamage + ")");
             }
             else
             {
@@ -205,106 +430,8 @@ namespace KW
             }
         }
 
-
-        private void Awake()
-        {
-            sr = GetComponent<SpriteRenderer>();
-            cController = GetComponent<CharacterController>();
-            anim = GetComponent<Animator>();
-
-            playerHealth = GetComponent<PlayerHealth>();
-            if (playerHealth == null)
-            {
-                Debug.LogError("[PlayerMovement] playeHealth 를 찾지 못함");
-            }
-            else
-            {
-                Debug.Log("[PlayerMovement] playeHealth 를 찾음");
-
-            }
-
-            LoadStatsFromJson();
-
-            // 시작 시에는 히트박스를 비활성화
-            if (attackHitBox != null)
-            {
-                attackHitBox.SetActive(false);
-            }
-        }
-
-        private void Start()
-        {
-            if (SaveManager.Instance != null)
-            {
-                SaveManager.Instance.player = this;
-            }
-
-            DontDestroyOnLoad(this);
-
-            // 씬 시작 시 상태(state) 설정
-            SwitchState(playerIdle);
-
-            if (playerHealth != null)
-            {
-                playerHealth.OnPlayerHit += HandleHit;
-                playerHealth.OnPlayerDied += HandleDeath;
-            }
-        }
-
-        private void Update()
-        {
-            if (DialogueManager.isDialogueActive) { return; }
-            if (!canMove) { return; }
-            if (isDashing) { return; }
-
-            _isGrounded = IsGrounded();
-            Gravity();
-
-            if (!isAttacking && !isSitting)
-            {
-                PlayerMove();
-                HandleSpriteFlip();
-            }
-
-            if (Input.GetMouseButtonDown(0) && IsGrounded() && !isAttacking)
-            {
-
-                if (IsPointerOverUIObject())
-                {
-                    Debug.Log("UI 위에 마우스가 있어서 공격 입력을 무시합니다.");
-                    return;
-                }
-                if (playerHealth == null)
-                {
-                    Debug.LogError("[PlayerMovement] PlayerHealth 를 찾을 수 없음");
-                }
-                if (playerHealth.hasWeapon == false)
-                {
-                    Debug.Log("플레이어가 무기가 없음");
-                    return;
-                }
-
-                previousState = currentState;
-
-                SwitchState(playerAttack);
-
-                // 공격 상태에서는 아래의 로직을 사용하지 않기 때문에 return
-                return;
-            }
-            anim.SetFloat("lastMoveX", lastMoveX);
-            anim.SetFloat("lastMoveZ", lastMoveZ);
-
-            if (Input.GetKeyDown(KeyCode.R) && !isAttacking && !isDashing)
-            {
-                TryUsePotion();
-            }
-            currentState.UpdateState(this);
-        }
-
         private void TryUsePotion()
         {
-            // Debug.Log("R키 입력 감지됨. 포션 사용 시도...");
-
             if (SaveManager.Instance == null)
             {
                 Debug.LogError("SaveManager가 없습니다.");
@@ -333,10 +460,8 @@ namespace KW
                 if (playerHealth.currentHp >= playerHealth.maxHp)
                 {
                     Debug.Log("플레이어의 체력을 더 이상 회복할 수 없습니다.");
-
                     return;
                 }
-
 
                 Debug.Log("포션 타입 확인 완료! 힐 상태로 전환합니다.");
                 healState.SetPotion(potion);
@@ -360,11 +485,8 @@ namespace KW
         private IEnumerator AttackLungeCoroutine()
         {
             float startTime = Time.time;
-
-            // 반동 방향
             Vector3 lungeDir;
 
-            // 기존의 방향을 lungeDir 로 지정
             if (dir.magnitude > 0.1f)
             {
                 lungeDir = dir;
@@ -372,7 +494,6 @@ namespace KW
             else
             {
                 lungeDir = new Vector3(lastMoveX, 0, lastMoveZ);
-                // 기존 입력값이 없으면
                 if (lungeDir.magnitude < 0.1f)
                 {
                     lungeDir = transform.forward;
@@ -382,7 +503,6 @@ namespace KW
             while (Time.time < startTime + attackLungeDuration)
             {
                 cController.Move(lungeDir.normalized * attackLungeSpeed * Time.deltaTime);
-
                 yield return null;
             }
         }
@@ -413,18 +533,36 @@ namespace KW
             }
         }
 
+        [Tooltip("애니메이션 이벤트 : 달리기 애니메이션 종료")]
+        public void AnimationEvent_WalkFinished()
+        {
+            if (beingChased)
+                Fatigue += 1;
+        }
+
+        [Tooltip("애니메이션 이벤트 : 회피 애니메이션 시작")]
+        public void AnimationEvent_DashStarted()
+        {
+            if (beingChased)
+                Fatigue += 2;
+        }
+
+        [Tooltip("애니메이션 이벤트 : 공격 애니메이션 시작")]
+        public void AnimationEvent_AttackStarted()
+        {
+            if (beingChased)
+                Fatigue += 2;
+        }
 
         [Tooltip("애니메이션 이벤트 : 공격 애니메이션 종료")]
         public void AnimationEvent_AttackFinished()
         {
             if (!isAttacking) return;
 
-
             float xInput = Input.GetAxisRaw("Horizontal");
             float zInput = Input.GetAxisRaw("Vertical");
 
-            // 입력 값이 있으면 
-            if (MathF.Abs(xInput) > 0.1f || Mathf.Abs(zInput) > 0.1f)
+            if (Mathf.Abs(xInput) > 0.1f || Mathf.Abs(zInput) > 0.1f)
             {
                 SwitchState(playerWalk);
             }
@@ -439,7 +577,7 @@ namespace KW
             if (SaveManager.Instance != null)
             {
                 SaveManager.Instance.SaveGame();
-                //Debug.Log("화톳불에 앉아 게임을 저장했습니다.");
+                ResetFatigueSystem();
             }
         }
 
@@ -448,11 +586,10 @@ namespace KW
         {
             if (UiManager.Instance != null)
             {
-                // Debug.Log("[UiManager] StartResponse");
                 UiManager.Instance.StartResponse();
+                ResetFatigueSystem();
             }
         }
-
         #endregion  
 
 
@@ -463,7 +600,6 @@ namespace KW
 
             dir = transform.forward * zInput + transform.right * xInput;
 
-            // 애니메이터에서 0 값을 받지 않도록 (달리다가 IDLE 로 전환될 때 오류 수정)
             if (dir.magnitude > 0.01f)
             {
                 lastMoveX = xInput;
@@ -472,7 +608,6 @@ namespace KW
                 anim.SetFloat("xInput", xInput);
                 anim.SetFloat("zInput", zInput);
             }
-            // 이동
             Vector3 finalVelocity = dir.normalized * currentSpeed;
 
             cController.Move(finalVelocity * Time.deltaTime);
@@ -490,7 +625,6 @@ namespace KW
         public void HandleHit(Vector3 dir)
         {
             lastHisPos = dir;
-
             SwitchState(damagedState);
         }
 
@@ -505,20 +639,17 @@ namespace KW
         public void SwitchState(MovementBaseState state)
         {
             currentState?.ExitState(this);
-
             currentState = state;
             currentState.EnterState(this);
         }
 
         private bool IsGrounded()
         {
-            // 플레이어의 바닥 판정
             spherePos = new Vector3(transform.position.x, transform.position.y - groundYOffset, transform.position.z);
             if (Physics.CheckSphere(spherePos, cController.radius - sphereRadius, _groundLayer))
             {
                 return true;
             }
-
             return false;
         }
 
@@ -529,12 +660,10 @@ namespace KW
                 velocity = Vector3.zero;
                 return;
             }
-            // 점프 했을 때 gravity 만큼 더 빨르게 낙하
             if (!IsGrounded())
             {
                 velocity.y += gravity * Time.deltaTime;
             }
-            // 오류 방지 & 바닥에 붙여놓기
             else if (velocity.y < 0)
             {
                 velocity.y = -2;

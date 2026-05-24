@@ -6,29 +6,36 @@ namespace KW
 {
     public class PlayerDashState : MovementBaseState
     {
+        private Coroutine dashCoroutine;
+
         public override void EnterState(PlayerMovement movement)
         {
             movement.isDashing = true;
-
-            //movement.sr.flipX = false;
 
             movement.anim.SetTrigger("isDashing");
             movement.anim.SetFloat("lastMoveX", movement.lastMoveX);
             movement.anim.SetFloat("lastMoveZ", movement.lastMoveZ);
 
-            movement.StartCoroutine(DashCoroutine(movement));
+            // 코루틴 참조를 저장해둡니다.
+            dashCoroutine = movement.StartCoroutine(DashCoroutine(movement));
         }
-
 
         public override void UpdateState(PlayerMovement movement)
         {
-            
+
         }
 
         public override void ExitState(PlayerMovement movement)
         {
             movement.isDashing = false;
-            movement.anim.ResetTrigger("isDashing");    
+            movement.anim.ResetTrigger("isDashing");
+
+            // 상태를 빠져나갈 때 대시 코루틴이 여전히 돌고 있다면 안전하게 중지시킵니다.
+            if (dashCoroutine != null)
+            {
+                movement.StopCoroutine(dashCoroutine);
+                dashCoroutine = null;
+            }
         }
 
         private IEnumerator DashCoroutine(PlayerMovement movement)
@@ -36,43 +43,45 @@ namespace KW
             float startTime = Time.time;
             Vector3 dashDir;
 
-            // 따로 입력되는 값이 없으면 이전에 움직였던 방향으로 대쉬
-            if(movement.dir.magnitude > 0.1f)
+            if (movement.dir.magnitude > 0.1f)
             {
                 dashDir = movement.dir;
             }
             else
             {
                 dashDir = new Vector3(movement.lastMoveX, 0, movement.lastMoveZ);
-                // 만약 게임 시작 직후라 lastMove 방향이 없으면 정면으로 나가게 예외처리
                 if (dashDir.magnitude < 0.1f) dashDir = movement.transform.forward;
             }
 
             while (Time.time < startTime + movement.dashDuration)
             {
-                movement.cController.Move(movement.dashSpeed * dashDir.normalized * Time.deltaTime);
-
-                //movement.sr.flipX = false;
+                // 캐릭터 컨트롤러가 존재할 때만 이동 처리를 하여 에러를 방지합니다.
+                if (movement.cController != null)
+                {
+                    movement.cController.Move(movement.dashSpeed * dashDir.normalized * Time.deltaTime);
+                }
 
                 yield return null;
             }
 
             movement.isDashing = false;
 
+            if (movement.currentState == movement.deathState || movement.Fatigue >= 100)
+            {
+                yield break; // 코루틴을 여기서 즉시 종료합니다.
+            }
+
             float x = Input.GetAxisRaw("Horizontal");
             float z = Input.GetAxisRaw("Vertical");
 
-            if(Mathf.Abs(x) > 0.1f || Mathf.Abs(z) > 0.1f)
+            if (Mathf.Abs(x) > 0.1f || Mathf.Abs(z) > 0.1f)
             {
                 movement.SwitchState(movement.playerWalk);
-
             }
             else
             {
                 movement.SwitchState(movement.playerIdle);
             }
-
-            //movement.SwitchState(movement.previousState);
         }
     }
 }

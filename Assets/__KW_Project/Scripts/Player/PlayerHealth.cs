@@ -13,12 +13,13 @@ namespace KW
         [SerializeField] private float _baseDamage = 10f;
         [SerializeField] private float _weaponDamage = 0f;
 
+        private float _originalBaseDamage = 10f;
 
         [Header("방어 관련")]
         [SerializeField] private float _defencePercentage = 0f;
                 
         public bool hasWeapon => _weaponDamage > 0f;                    // 현재 무기가 장착되어 있는 지 확인
-        public float TotalDamage { get { return _baseDamage + _weaponDamage; } }    
+        public float TotalDamage { get { return _baseDamage + _weaponDamage; } }
 
         public virtual float currentHp => _currentHp;
         public virtual float maxHp => _maxHp;
@@ -89,9 +90,18 @@ namespace KW
         {
             _maxHp = parsedMaxHp;
             _currentHp = _maxHp;
+
+            _originalBaseDamage = parsedBaseDamage;
             _baseDamage = parsedBaseDamage;
 
             OnHealthChanged?.Invoke(_currentHp, parsedMaxHp);
+        }
+
+        public void UpdateDamageModifier(float modifier)
+        {
+            _baseDamage = _originalBaseDamage * modifier;
+
+            Debug.Log($"[PlayerHealth] 피로도 반영 완료. 원본 기본뎀: {_originalBaseDamage} -> 조정된 기본뎀: {_baseDamage} (최종 공격력 TotalDamage: {TotalDamage})");
         }
 
         // 몬스터가 타격 시 호출
