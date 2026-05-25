@@ -9,6 +9,7 @@ namespace KW
     public class SkeletonController : MonoBehaviour
     {
         private MonsterBaseState<SkeletonController> currentState;
+        private Coroutine slowDebuffCoroutine;
 
         #region 스켈레톤 fsm
 
@@ -61,6 +62,7 @@ namespace KW
         public Vector2 lastDirection;                               // coolDownState 에서 방향을 기억하기 위한 변수
         public float stunTimerSerialized;
         public GameObject hitBox;
+        public GameObject indicator;
 
         [Header("피격")]
         [HideInInspector] public Vector3 lastDamagedDirection;
@@ -216,6 +218,16 @@ namespace KW
         {
             hitBox.SetActive(false);
 
+            if (slowDebuffCoroutine != null)
+            {
+                StopCoroutine(slowDebuffCoroutine);
+                slowDebuffCoroutine = null;
+            }
+            if (anim != null)
+            {
+                anim.speed = 1f;
+            }
+
             // 몬스터 사망 시, 사망 지역을 전달
             string currentScene = SceneManager.GetActiveScene().name;
 
@@ -242,6 +254,56 @@ namespace KW
             Debug.Log($"[SkeletonController] 스켈레톹 사망 : {this.monsterId} / {currentScene}");
 
             SwitchState(deathState);
+        }
+
+        public void ApplySlowDebuff(float duration, float slowPercent)
+        {
+            if (slowDebuffCoroutine != null)
+            {
+                StopCoroutine(slowDebuffCoroutine);
+            }
+
+            slowDebuffCoroutine = StartCoroutine(SlowDebuffRoutine(duration, slowPercent));
+        }
+
+        private IEnumerator SlowDebuffRoutine(float duration, float slowPercent)
+        {
+            float originalPatrolSpeed = patrolSpeed;
+            float originalChaseSpeed = chaseSpeed;
+
+            float modifier = 1f - (slowPercent / 100f);
+
+            patrolSpeed = originalPatrolSpeed * modifier;
+            chaseSpeed = originalChaseSpeed * modifier;
+
+            if (agent != null && agent.enabled)
+            {
+                if (currentState == chaseState) agent.speed = chaseSpeed;
+                else if (currentState == patrolState) agent.speed = patrolSpeed;
+            }
+
+            if (anim != null)
+            {
+                anim.speed = modifier;
+            }
+
+            yield return new WaitForSeconds(duration);
+
+            patrolSpeed = originalPatrolSpeed;
+            chaseSpeed = originalChaseSpeed;
+
+            if (agent != null && agent.enabled)
+            {
+                if (currentState == chaseState) agent.speed = chaseSpeed;
+                else if (currentState == patrolState) agent.speed = patrolSpeed;
+            }
+
+            if (anim != null)
+            {
+                anim.speed = 1f;
+            }
+
+            slowDebuffCoroutine = null;
         }
 
         private void OnDrawGizmos()

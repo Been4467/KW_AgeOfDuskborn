@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using static UnityEngine.Rendering.DebugUI;
@@ -100,6 +101,9 @@ namespace KW
                 HandleFatigueEvents(_fatigue);
             }
         }
+
+        [Header("회피 시스템")]
+        private List<SkeletonController> activeAttackingMonsters = new List<SkeletonController>();
 
         [SerializeField]
         public bool canMove = true;                         // 플레이어 움직임 허용
@@ -359,6 +363,48 @@ namespace KW
             Debug.Log($"[추격 해제] 현재 추격 중인 몬스터 수: {chasingMonsterCount} | beingChased: {beingChased}");
         }
 
+        public void RegisterDodgeableMonster(SkeletonController monster)
+        {
+            if (!activeAttackingMonsters.Contains(monster))
+                activeAttackingMonsters.Add(monster);
+        }
+
+        public void UnregisterDodgeableMonster(SkeletonController monster)
+        {
+            if (activeAttackingMonsters.Contains(monster))
+                activeAttackingMonsters.Remove(monster);
+        }
+
+        public void CheckPerfectDodge()
+        {
+            if (activeAttackingMonsters.Count > 0)
+            {
+                SkeletonController targetMonster = activeAttackingMonsters[0];
+                OnPerfectDodgeSuccess(targetMonster);
+            }
+        }
+
+        private void OnPerfectDodgeSuccess(SkeletonController monster)
+        {
+            Debug.Log($"⚡ 저스트 회피 성공! 대상: {monster.name}");
+
+            float slowRadius = 10.0f;
+            //int monsterLayerMask = LayerMask.GetMask("Monster");
+
+            Collider[] surroundingMonsters = Physics.OverlapSphere(transform.position, slowRadius);
+            foreach (var col in surroundingMonsters)
+            {
+                SkeletonController targetMonster = col.GetComponent<SkeletonController>();
+                if (targetMonster != null)
+                {
+                    targetMonster.ApplySlowDebuff(1.0f, 90f);
+                    Debug.Log($"[회피 보너스] {targetMonster.name}에게 90% 슬로우 디버프 적용!");
+                }
+            }
+
+            activeAttackingMonsters.Clear();
+        }
+
         private void HandleDeathed()
         {
             Debug.Log("[PlayerMovement] HandleDeathed");
@@ -545,6 +591,8 @@ namespace KW
         {
             if (beingChased)
                 Fatigue += 2;
+
+            CheckPerfectDodge();
         }
 
         [Tooltip("애니메이션 이벤트 : 공격 애니메이션 시작")]
