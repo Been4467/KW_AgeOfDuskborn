@@ -31,8 +31,20 @@ namespace KW
         public string monsterId = "Skeleton";
 
         [Header("이동")]
+        private float _basePatrolSpeed;
+        private float _baseChaseSpeed;
         public float patrolSpeed = 1;
         public float chaseSpeed = 3;
+        private float slowModifier = 1f;
+        public float CurrentAgentSpeed
+        {
+            get
+            {
+                if (currentState == chaseState) return chaseSpeed * slowModifier;
+                if (currentState == patrolState) return patrolSpeed * slowModifier;
+                return patrolSpeed * slowModifier;
+            }
+        }
 
         [Header("추격,공격 범위")]
         [HideInInspector] public float detectRange = 5f;
@@ -105,6 +117,9 @@ namespace KW
                 health.OnDeath += HandleDeath;
             }
 
+            _basePatrolSpeed = patrolSpeed;
+            _baseChaseSpeed = chaseSpeed;
+
             _baseDamage = damage;
             agent.updateRotation = false;
             rb.isKinematic = true;
@@ -119,8 +134,12 @@ namespace KW
                 MonsterData data = MonsterDataParsing.Instance.GetMonsterData(monsterId);
 
                 // 가져온 데이터로 변수 값 초기화
+                _basePatrolSpeed = data.patrolSpeed;
+                _baseChaseSpeed = data.chaseSpeed;
+
                 patrolSpeed = data.patrolSpeed;
                 chaseSpeed = data.chaseSpeed;
+
                 detectRange = data.detectRange;
                 coolDownDuration = data.coolDownDuration;
                 damage = data.damage;
@@ -145,6 +164,11 @@ namespace KW
 
             stunTimerSerialized = damagedState.stunTimer;
             idleWaittimeSerialized = idleState.idleTimer;
+
+            if (agent != null && agent.enabled && !isDoingLunge)
+            {
+                agent.speed = CurrentAgentSpeed;
+            }
         }
 
         public void SwitchState(MonsterBaseState<SkeletonController> monsterState)
@@ -157,6 +181,8 @@ namespace KW
 
         public void PerformAttackLunge()
         {
+            ResetSlowDebuff();
+
             StopAllCoroutines();
             StartCoroutine(LungeRoutine());
         }
@@ -164,22 +190,19 @@ namespace KW
         private IEnumerator LungeRoutine()
         {
             isDoingLunge = true;
-
-            // navAgent 잠시 비활성화
             agent.enabled = false;
-
-            // rigidbody의 kinematic 잠시 비활성화
             rb.isKinematic = false;
 
-            // AttackState 에서 지정한 방향으로 공격 시 조금 이동(반동효과)
             rb.AddForce(lastAttackDirection * lungeForce, ForceMode.Impulse);
 
             yield return new WaitForSeconds(lungeDuration);
 
             rb.velocity = Vector3.zero;
             rb.isKinematic = true;
-
             agent.enabled = true;
+
+            // 돌진 직후 현재 상태에 맞는 속도로 재연산
+            if (agent.enabled) agent.speed = CurrentAgentSpeed;
 
             isDoingLunge = false;
         }
@@ -187,8 +210,11 @@ namespace KW
 
         public void StartCoolDown()
         {
+            ResetSlowDebuff();
+
             SwitchState(coolDownState);
 
+            StopAllCoroutines();
             StartCoroutine(CoolDownRoutine());
         }
 
@@ -218,15 +244,7 @@ namespace KW
         {
             hitBox.SetActive(false);
 
-            if (slowDebuffCoroutine != null)
-            {
-                StopCoroutine(slowDebuffCoroutine);
-                slowDebuffCoroutine = null;
-            }
-            if (anim != null)
-            {
-                anim.speed = 1f;
-            }
+            ResetSlowDebuff();
 
             // 몬스터 사망 시, 사망 지역을 전달
             string currentScene = SceneManager.GetActiveScene().name;
@@ -262,46 +280,27 @@ namespace KW
             {
                 StopCoroutine(slowDebuffCoroutine);
             }
-
             slowDebuffCoroutine = StartCoroutine(SlowDebuffRoutine(duration, slowPercent));
         }
 
         private IEnumerator SlowDebuffRoutine(float duration, float slowPercent)
         {
-            float originalPatrolSpeed = patrolSpeed;
-            float originalChaseSpeed = chaseSpeed;
+            slowModifier = 1f - (slowPercent / 100f);
 
-            float modifier = 1f - (slowPercent / 100f);
-
-            patrolSpeed = originalPatrolSpeed * modifier;
-            chaseSpeed = originalChaseSpeed * modifier;
-
-            if (agent != null && agent.enabled)
-            {
-                if (currentState == chaseState) agent.speed = chaseSpeed;
-                else if (currentState == patrolState) agent.speed = patrolSpeed;
-            }
-
-            if (anim != null)
-            {
-                anim.speed = modifier;
-            }
+            if (agent != null && agent.enabled) agent.speed = CurrentAgentSpeed;
+            if (anim != null) anim.speed = slowModifier;
 
             yield return new WaitForSeconds(duration);
 
-            patrolSpeed = originalPatrolSpeed;
-            chaseSpeed = originalChaseSpeed;
+            ResetSlowDebuff();
+        }
 
-            if (agent != null && agent.enabled)
-            {
-                if (currentState == chaseState) agent.speed = chaseSpeed;
-                else if (currentState == patrolState) agent.speed = patrolSpeed;
-            }
+        public void ResetSlowDebuff()
+        {
+            slowModifier = 1f;
 
-            if (anim != null)
-            {
-                anim.speed = 1f;
-            }
+            if (agent != null && agent.enabled) agent.speed = CurrentAgentSpeed;
+            if (anim != null) anim.speed = 1f;
 
             slowDebuffCoroutine = null;
         }
