@@ -21,9 +21,9 @@ namespace KW
 
         private void Update()
         {
-            // if (player == null) Debug.LogError("[DitherTransparency] 플레이어가 없음");
+            // if (player == null) Debug.LogError("[DitherTransparency] 플레이어가 없음");
 
-            if (player == null || mainCamera == null) return;
+            if (player == null || mainCamera == null) return;
 
             Vector3 direction = (player.position - mainCamera.transform.position).normalized;
             float distance = Vector3.Distance(mainCamera.transform.position, player.position);
@@ -32,8 +32,8 @@ namespace KW
             HashSet<Renderer> currentOccluders = new HashSet<Renderer>();
             foreach (var hit in hits)
             {
-                // 콜라이더가 맞은 오브젝트의 '자식'들에 있는 모든 렌더러를 찾습니다.
-                Renderer[] renderers = hit.collider.GetComponentsInChildren<Renderer>();
+                // 콜라이더가 맞은 오브젝트의 '자식'들에 있는 모든 렌더러를 찾습니다.
+                Renderer[] renderers = hit.collider.GetComponentsInChildren<Renderer>();
                 foreach (var rend in renderers)
                 {
                     if (rend != null)
@@ -57,7 +57,7 @@ namespace KW
             foreach (var rend in rendererKeys)
             {
                 if (rend == null) // 오브젝트가 파괴된 경우를 대비
-                {
+                {
                     toRemove.Add(rend);
                     continue;
                 }

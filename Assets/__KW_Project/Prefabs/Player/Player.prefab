@@ -298,7 +298,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &761052196748248933
 Transform:
   m_ObjectHideFlags: 0
@@ -778,6 +778,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DataParsingFrom: "\uB370\uC774\uD130 \uBCC0\uACBD \uC2DC \nAssets/__KW_Project/Resources
     \uC5D0\uC11C \uBCC0\uACBD\nplayerStats.json"
+  saveCount: 0
+  limitedSaveCount: 5
   walkSpeed: 3
   runSpeed: 5
   airSpeed: 1.5
@@ -786,6 +788,13 @@ MonoBehaviour:
   lastMoveX: 0
   lastMoveZ: 0
   isAttacking: 0
+  fatigueTriggers:
+    over20: 0
+    over50: 0
+    over80: 0
+    over100: 0
+  maxFatigue: 100
+  _fatigue: 0
   canMove: 1
   currentSpeed: 0
   dir: {x: 0, y: 0, z: 0}
