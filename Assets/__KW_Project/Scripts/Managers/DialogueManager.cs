@@ -68,9 +68,11 @@ namespace KW
 
         private void OnDestroy()
         {
-            Instance = null;
+            if (Instance == this)
+            {
+                Instance = null;
+            }
         }
-
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {

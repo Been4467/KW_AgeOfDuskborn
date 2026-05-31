@@ -72,10 +72,12 @@ namespace KW
 
         private void OnDestroy()
         {
-            // 이벤트 구독자 전체 해제
-            OnLoadGame = null;
+            if (Instance == this)
+            {
+                OnLoadGame = null;
 
-            _instance = null;
+                _instance = null;
+            }
         }
 
         public void SaveGame()
@@ -372,7 +374,7 @@ namespace KW
             if (VfxManager.Instance != null)
                 Destroy(VfxManager.Instance.gameObject);
 
-            if (VfxManager.Instance != null)
+            if (UiManager.Instance != null)
                 Destroy(UiManager.Instance.gameObject);
 
             if (DialogueManager.Instance != null)

@@ -46,7 +46,10 @@ private void OnEnable()
 
         private void OnDestroy()
         {
-            Instance = null;
+            if (Instance == this)
+            {
+                Instance = null;
+            }
         }
 
         // 씬 로딩이 끝나면 무조건 실행됨 -> 다시 등록!

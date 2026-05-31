@@ -28,7 +28,10 @@ namespace KW
 
         private void OnDestroy()
         {
-            Instance = null;
+            if (Instance == this)
+            {
+                Instance = null;
+            }
         }
 
         // 외부(포탈)에서 이 함수를 호출합니다.

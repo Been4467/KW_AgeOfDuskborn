@@ -58,6 +58,8 @@ namespace KW
             OnHealthChanged = null;
         }
 
+
+
         // 방어구 장착 시 호출될 함수
         public void SetEquippedArmour(Armour armourData)
         {

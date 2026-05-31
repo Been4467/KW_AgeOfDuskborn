@@ -62,9 +62,13 @@ namespace KW
 
         private void OnDestroy()
         {
-            // 이벤트 구독자 전체 해제
-            OnAnyUiStateChanged = null;
-            OnDeathed = null;
+            if (Instance == this)
+            {
+                OnAnyUiStateChanged = null;
+                OnDeathed = null;
+                
+                Instance = null;
+            }
         }
 
         void OnEnable()
