@@ -2484,7 +2484,7 @@ Transform:
   m_GameObject: {fileID: 1259385414}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0.27563733, z: 0, w: 0.96126175}
-  m_LocalPosition: {x: 79.72, y: 5, z: 47.38}
+  m_LocalPosition: {x: 77.68, y: 5, z: 46.1}
   m_LocalScale: {x: 2, y: 4, z: 5.88}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3968,7 +3968,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b922a3b8d5c75c143b7a72be1adb9a7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneToLoad: ChurchDungeon
+  sceneToLoad: ChurchDungeon_Room.1
   spawnPointID: 0
 --- !u!65 &1607386481
 BoxCollider:
@@ -4049,13 +4049,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1607386479}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 81.5, y: 5, z: 58}
+  m_LocalRotation: {x: -0, y: 0.013796973, z: -0, w: 0.9999048}
+  m_LocalPosition: {x: 81.5, y: 5, z: 57.84}
   m_LocalScale: {x: 2, y: 4, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 1.581, z: 0}
 --- !u!1 &1731254937
 GameObject:
   m_ObjectHideFlags: 0
