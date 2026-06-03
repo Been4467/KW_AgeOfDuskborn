@@ -27,9 +27,12 @@ EditorBuildSettings:
     path: Assets/__KW_Project/Scenes/Maps/4. Forest/ForestScene.unity
     guid: 94a7bf0840dc6b64d95849a6679bbaa6
   - enabled: 1
-    path: Assets/__KW_Project/Scenes/Maps/4. Forest/ChurchDungeon_Room.1.unity
+    path: Assets/__KW_Project/Scenes/Maps/4. Forest/Dungeons/ChurchDungeon_Room.1.unity
     guid: cc10df96022b19841ac18003dab61704
   - enabled: 1
-    path: Assets/__KW_Project/Scenes/Maps/4. Forest/ChurchDungeon_Room.2.unity
+    path: Assets/__KW_Project/Scenes/Maps/4. Forest/Dungeons/ChurchDungeon_Room.2.unity
+    guid: 131160c7ffca8d0478af409f22dff0b5
+  - enabled: 1
+    path: Assets/__KW_Project/Scenes/Maps/4. Forest/Dungeons/BossRoom.Demo.unity
     guid: a6ef48f1728698446bdf68bfad53f916
   m_configObjects: {}
