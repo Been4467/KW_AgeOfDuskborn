@@ -6630,6 +6630,79 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 795165706614100933, guid: c863f656782d099438e2f1ba789301c8, type: 3}
   m_PrefabInstance: {fileID: 1809772182}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &805435274
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1713194821316035354, guid: f0d65aeff69cc4b4ca9e8a88ae622c39, type: 3}
+      propertyPath: fieldMonters.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1713194821316035354, guid: f0d65aeff69cc4b4ca9e8a88ae622c39, type: 3}
+      propertyPath: fieldMonters.Array.data[0]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1713194821316035354, guid: f0d65aeff69cc4b4ca9e8a88ae622c39, type: 3}
+      propertyPath: fieldMonters.Array.data[1]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1713194821316035354, guid: f0d65aeff69cc4b4ca9e8a88ae622c39, type: 3}
+      propertyPath: fieldMonters.Array.data[2]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3562012686124432100, guid: f0d65aeff69cc4b4ca9e8a88ae622c39, type: 3}
+      propertyPath: m_Name
+      value: FieldLevelManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 8377624402028850107, guid: f0d65aeff69cc4b4ca9e8a88ae622c39, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8377624402028850107, guid: f0d65aeff69cc4b4ca9e8a88ae622c39, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8377624402028850107, guid: f0d65aeff69cc4b4ca9e8a88ae622c39, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8377624402028850107, guid: f0d65aeff69cc4b4ca9e8a88ae622c39, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8377624402028850107, guid: f0d65aeff69cc4b4ca9e8a88ae622c39, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8377624402028850107, guid: f0d65aeff69cc4b4ca9e8a88ae622c39, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8377624402028850107, guid: f0d65aeff69cc4b4ca9e8a88ae622c39, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8377624402028850107, guid: f0d65aeff69cc4b4ca9e8a88ae622c39, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8377624402028850107, guid: f0d65aeff69cc4b4ca9e8a88ae622c39, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8377624402028850107, guid: f0d65aeff69cc4b4ca9e8a88ae622c39, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f0d65aeff69cc4b4ca9e8a88ae622c39, type: 3}
 --- !u!1 &811222280
 GameObject:
   m_ObjectHideFlags: 0
@@ -19935,5 +20008,9 @@ SceneRoots:
   - {fileID: 732650921}
   - {fileID: 80195309}
   - {fileID: 980384734}
+<<<<<<< Updated upstream:Assets/__KW_Project/Scenes/Maps/4. Forest/ChurchDungeon_Room.1.unity
   - {fileID: 1807293294}
   - {fileID: 2132669880}
+=======
+  - {fileID: 805435274}
+>>>>>>> Stashed changes:Assets/__KW_Project/Scenes/Maps/4. Forest/ChurchDungeon.unity

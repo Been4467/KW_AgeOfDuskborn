@@ -46,18 +46,42 @@ namespace KW
             // 비동기 씬 로드 시작
             AsyncOperation op = SceneManager.LoadSceneAsync(sceneName);
 
-            // 로딩이 끝날 때까지 대기
             while (!op.isDone)
             {
                 yield return null;
             }
+            yield return null; // 씬 로드 직후 안정화 대기
 
+            // 1. 새 씬에 있는 가짜 복제본 플레이어 제거
+            CleanUpDuplicatePlayer();
+
+            // 2. 가짜 플레이어가 완전히 Destroy될 수 있도록 한 프레임 더 대기 (매우 중요)
             yield return null;
-            // yield return new WaitForSeconds(1f); 
 
-            // 이제 안전하게 플레이어 이동
+            // 3. 이제 안전하게 원본 플레이어 이동 및 카메라 컴포넌트 재연결
             MovePlayerToSpawnPoint();
         }
+
+        private void CleanUpDuplicatePlayer()
+        {
+            // 씬에 존재하는 모든 "Player" 태그 오브젝트를 찾습니다.
+            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+
+            if (players.Length > 1)
+            {
+                foreach (var p in players)
+                {
+                    // PlayerSceneConnector가 인스턴스 싱글톤 구조이므로, 
+                    // 현재 static Instance로 지정된 원본이 '아닌' 오브젝트가 새로 생성된 복제본입니다.
+                    if (p.GetComponent<PlayerSceneConnector>() != PlayerSceneConnector.Instance)
+                    {
+                        Debug.Log($"[DuskbornSceneManager] 새 씬에서 중복 생성된 플레이어({p.name})를 제거했습니다.");
+                        Destroy(p);
+                    }
+                }
+            }
+        }
+
 
         private void MovePlayerToSpawnPoint()
         {
@@ -104,7 +128,7 @@ namespace KW
             }
 
         }
-        
+
 
         public void GoToTitleScene()
         {
@@ -120,7 +144,7 @@ namespace KW
             if (playerObj != null) Destroy(playerObj);
 
             // 매니저들 파괴
-            
+
         }
 
     }

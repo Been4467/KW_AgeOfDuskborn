@@ -41,37 +41,35 @@ namespace KW
 
         public void ConnectToSceneComponents()
         {
-            // Cinemachine 연결
+            // 1. 현재 씬에 있는 가상 카메라를 새로 탐색
             CinemachineVirtualCamera vCam = FindObjectOfType<CinemachineVirtualCamera>();
+
             if (vCam != null)
             {
+                // 원본 플레이어(this)를 타겟으로 지정
                 vCam.Follow = this.transform;
                 vCam.LookAt = this.transform;
 
-                // 씬 전환 이후 카메라가 튀지 않게 워프 처린
+                // [중요] 카메라 팅김 방지 워프 처리를 한 프레임 쉬고 하거나, 
+                // 포지션이 결정된 직후에 확실히 먹여야 합니다.
                 vCam.OnTargetObjectWarped(transform, transform.position - vCam.transform.position);
 
-                Debug.Log("[PlayerSceneConnector] VC 연결 완료.");
+                Debug.Log("[PlayerSceneConnector] Cinemachine VC 타겟 연결 성공!");
             }
             else
             {
-                Debug.LogError("[PlayerSceneConnector] VC 못 찾음.");
-
+                Debug.LogError("[PlayerSceneConnector] 이 씬에는 CinemachineVirtualCamera가 없습니다.");
             }
 
-            // Camera - DitherTranparency 연결
+            // 2. 메인 카메라 디더링 연결
             if (Camera.main != null)
             {
                 DitherTransparency dither = Camera.main.GetComponent<DitherTransparency>();
-
-                dither.player = this.transform;
-
-                Debug.Log("[PlayerSceneConnector] Dither 연결 완료.");
-            }
-            else
-            {
-                Debug.LogError("[PlayerSceneConnector] Dither 못 찾음.");
-
+                if (dither != null)
+                {
+                    dither.player = this.transform;
+                    Debug.Log("[PlayerSceneConnector] Dither 연결 성공!");
+                }
             }
 
             PlayerMovement player = this.transform.GetComponent<PlayerMovement>();
