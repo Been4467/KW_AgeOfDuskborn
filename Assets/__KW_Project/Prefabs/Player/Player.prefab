@@ -779,7 +779,7 @@ MonoBehaviour:
   DataParsingFrom: "\uB370\uC774\uD130 \uBCC0\uACBD \uC2DC \nAssets/__KW_Project/Resources
     \uC5D0\uC11C \uBCC0\uACBD\nplayerStats.json"
   saveCount: 0
-  limitedSaveCount: 1
+  limitedSaveCount: 2
   walkSpeed: 3
   runSpeed: 5
   airSpeed: 1.5

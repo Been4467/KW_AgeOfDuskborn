@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
 
@@ -8,14 +8,13 @@ namespace KW
     {
         public static FieldLevelManager Instance { get; private set; }
 
-        [Header("¼³Á¤")]
+        [Header("ì„¤ì •")]
+        [SerializeField] private int _fieldLevel;        // í•„ë“œ ë ˆë²¨
+        [SerializeField] private float _multiplier;        // ë³´ì • ìˆ˜ì¹˜
 
-        [SerializeField] private int _fieldLevel;           //  ÇÊµå ·¹º§
-        [SerializeField] private float _multiplier;        //  º¸Á¤ ¼öÄ¡
-
-        [Header("ÂüÁ¶")]
-
-        public List<GameObject> fieldMonters = new List<GameObject>(); // ÇÊµå ¸ó½ºÅÍµé
+        [Header("ì°¸ì¡°")]
+        // âš ï¸ ì£¼ì˜: ì´ ë¦¬ìŠ¤íŠ¸ëŠ” ì”¬ì´ ë°”ë€” ë•Œë§ˆë‹¤ ìƒˆë¡œ ê°±ì‹ (Clear ë° ì¬ë“±ë¡)ë˜ì–´ì•¼ í•©ë‹ˆë‹¤!
+        public List<GameObject> fieldMonters = new List<GameObject>(); // í•„ë“œ ëª¬ìŠ¤í„°ë“¤
 
         public int FieldLevel
         {
@@ -23,7 +22,6 @@ namespace KW
             set
             {
                 if (_fieldLevel == value) return;
-
                 _fieldLevel = value;
             }
         }
@@ -34,7 +32,6 @@ namespace KW
             set
             {
                 if (_multiplier == value) return;
-
                 _multiplier = value;
             }
         }
@@ -47,7 +44,11 @@ namespace KW
                 DontDestroyOnLoad(gameObject);
             }
             else
+            {
+                // ğŸ› ï¸ ì¤‘ìš”: ì¤‘ê´„í˜¸ë¥¼ ì—´ê³  Destroy í›„ ì¦‰ì‹œ return; í•˜ì—¬ í•¨ìˆ˜ë¥¼ íƒˆì¶œí•©ë‹ˆë‹¤.
                 Destroy(gameObject);
+                return;
+            }
         }
 
         private void OnValidate()
@@ -81,7 +82,7 @@ namespace KW
             if (fieldMonster.TryGetComponent(out MonsterHealth monsterHealth) &&
                 fieldMonster.TryGetComponent(out SkeletonController skeletonController))
             {
-                //  ÇÊµå ·¹º§ÀÌ 1 ¿À¸¦ ¼ö·Ï ¸ó½ºÅÍµéÀÇ Ã¼·Â°ú °ø°İ·Â °ªÀÌ 0.5¹è ¾¿ ¿À¸¨´Ï´Ù.
+                // í•„ë“œ ë ˆë²¨ì´ 1 ì˜¤ë¥¼ ìˆ˜ë¡ ëª¬ìŠ¤í„°ë“¤ì˜ ì²´ë ¥ê³¼ ê³µê²©ë ¥ ê°’ì´ 0.5ë°° ì”© ì˜¤ë¦…ë‹ˆë‹¤.
                 monsterHealth.UpdateHealth(_fieldLevel, _multiplier);
                 skeletonController.UpdateDamage(_fieldLevel, _multiplier);
             }

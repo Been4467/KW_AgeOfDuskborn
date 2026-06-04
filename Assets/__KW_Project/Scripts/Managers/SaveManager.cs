@@ -56,25 +56,33 @@ namespace KW
 
         private void Awake()
         {
-            if (_instance == null)
-            {
-                _instance = this;
-                DontDestroyOnLoad(gameObject);
-            }
-            else
+            // 이미 할당된 instance가 내가 아니라 '다른' 오브젝트일 때만 파괴합니다.
+            if (_instance != null && _instance != this)
             {
                 Destroy(gameObject);
+                return; // 아래 로직을 타지 않도록 리턴
             }
 
-            savePath = Application.persistentDataPath + "/saveGame.json";                   // 저장될 주소 지정
+            // _instance가 null이거나, 이미 나로 지정되어 있다면 정상적인 초기화를 진행합니다.
+            _instance = this;
+
+            // 부모 오브젝트가 있다면 DontDestroyOnLoad가 작동하지 않으므로 부모 해제
+            if (transform.parent != null)
+            {
+                transform.SetParent(null);
+            }
+
+            DontDestroyOnLoad(gameObject);
+
+            savePath = Application.persistentDataPath + "/saveGame.json"; // 저장될 주소 지정
         }
 
         private void OnDestroy()
         {
-            if (Instance == this)
+            // 프로퍼티(Instance) 대신 private 변수(_instance)를 직접 비교하세요.
+            if (_instance == this)
             {
                 OnLoadGame = null;
-
                 _instance = null;
             }
         }
@@ -196,8 +204,76 @@ namespace KW
             }
         }
 
+        public void ReApplyEquippedItems()
+        {
+            // 퀵슬롯 UI를 새로 검색해서 붙잡음
+            FindQuickSlots();
 
-        public void LoadGame()
+            if (playerHealth == null)
+            {
+                playerHealth = GameObject.FindGameObjectWithTag("Player")?.GetComponent<PlayerHealth>();
+            }
+
+            if (playerHealth != null)
+            {
+                // 1. 무기 슬롯에 아이템이 있다면 데미지 재적용
+                if (weaponSlot != null && weaponSlot.equippedItem is Weapon weapon)
+                {
+                    playerHealth.SetEquippedWeapon(weapon);
+                    Debug.Log($"[SaveManager] 씬 이동 후 무기 데미지({weapon.damage}) 재적용 완료");
+                }
+                else
+                {
+                    playerHealth.SetEquippedWeapon(null);
+                }
+
+                // 2. 방어구 슬롯에 아이템이 있다면 방어율 재적용
+                if (armourSlot != null && armourSlot.equippedItem is Armour armour)
+                {
+                    playerHealth.SetEquippedArmour(armour);
+                }
+                else
+                {
+                    playerHealth.SetEquippedArmour(null);
+                }
+            }
+        }
+
+        public void HandlePlayerRespawn(int currentSaveCount)
+        {
+            bool hasSaveFile = System.IO.File.Exists(savePath);
+
+            // 🌟 [안전장치] 혹시라도 player 참조가 null이 되었다면 새로 찾아줍니다.
+            if (player == null)
+            {
+                GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+                if (playerObj != null) player = playerObj.GetComponent<PlayerMovement>();
+            }
+
+            if (hasSaveFile)
+            {
+                Debug.Log("[SaveManager] 세이브 파일이 존재하므로, 기존 데이터를 로드하여 부활시킵니다.");
+                LoadGame();
+            }
+            else
+            {
+                Debug.LogWarning("[SaveManager] 저장된 파일이 없습니다! 현재 씬의 기본 리스폰 자리에서 플레이어를 부활시킵니다.");
+
+                if (player != null)
+                {
+                    // 🌟 대피소: 플레이어에게 직접 타겟 ID(0)를 넘겨 리스폰 메서드를 호출합니다.
+                    player.RespawnPlayerAtSpawnPoint(player.defaultRespawnSubID);
+                }
+                else
+                {
+                    Debug.LogError("[SaveManager] 플레이어 인스턴스를 끝내 찾을 수 없어 기본 부활에 실패했습니다.");
+                }
+            }
+        }
+
+
+        // 1. LoadGame 메서드에 매개변수 추가 (isPortalMoving 기본값 false)
+        public void LoadGame(bool isRespawn = false, bool isPortalMoving = false)
         {
             if (!File.Exists(savePath))
             {
@@ -209,91 +285,117 @@ namespace KW
             string json = File.ReadAllText(savePath);
             SaveData data = JsonUtility.FromJson<SaveData>(json);
 
-            StartCoroutine(LoadGameCoroutine(data));
+            // 코루틴으로 부활 여부와 구역 이동 여부를 명확하게 넘겨줍니다.
+            StartCoroutine(LoadGameCoroutine(data, isRespawn, isPortalMoving));
         }
 
-        private IEnumerator LoadGameCoroutine(SaveData data)
+        // 2. LoadGameCoroutine 메서드 수정
+        private IEnumerator LoadGameCoroutine(SaveData data, bool isRespawn, bool isPortalMoving)
         {
-            // 씬 확인
             string currentScene = SceneManager.GetActiveScene().name;
-            if (data.sceneName != currentScene)
-            {
-                // 씬이 다르면 로드하고 기다림
-                AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(data.sceneName);
 
-                // 로딩이 끝날 때 까지 대기
-                while (!asyncLoad.isDone)
+            Debug.Log($"[SaveManager] 검증 완료 -> 현재씬: {currentScene} | 세이브씬: {data.sceneName} | 구역이동: {isPortalMoving} | 부활: {isRespawn}");
+
+            // 💡 [완벽 차단] 부활도 아니고, '구역 이동도 아닐 때'만 세이브 파일의 씬으로 이동합니다.
+            if (!isRespawn && !isPortalMoving)
+            {
+                if (data.sceneName != currentScene)
                 {
+                    Debug.Log($"[SaveManager] 🟢 [일반 로드] 세이브 파일에 기록된 옛날 씬({data.sceneName})으로 이동합니다.");
+                    AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(data.sceneName);
+                    while (!asyncLoad.isDone)
+                    {
+                        yield return null;
+                    }
                     yield return null;
                 }
-
-                // 씬 로드 후 1프레임을 더 쉬어 다른 스크립트들의 Awake() 함수가 호출될 동안 더 기다려줌
-                yield return null;
+            }
+            else
+            {
+                // 💡 문을 통한 이동이거나 부활일 때는 파일 내부의 sceneName을 철저히 무시하고 현재 씬을 유지합니다!
+                Debug.Log($"[SaveManager] 🔵 [구역이동/부활] 파일의 씬 전환을 무시하고 현재 씬({currentScene})을 유지합니다.");
             }
 
-            // 데이터 복구
-            // 플레이어 복구
-            // CharacterController 가 있으면 transform.position 직접 수정이 안 먹힐 수 있어서 꺼야함
+            // 씬 전환/유지 후 컴포넌트 새롭게 캐싱
+            GameObject newPlayerObj = GameObject.FindGameObjectWithTag("Player");
+            if (newPlayerObj != null)
+            {
+                player = newPlayerObj.GetComponent<PlayerMovement>();
+                playerHealth = newPlayerObj.GetComponent<PlayerHealth>();
+            }
+
+            inventory = FindFirstObjectByType<Inventory>();
+            questManager = FindFirstObjectByType<QuestManager>();
+            FindQuickSlots();
+
+            // 플레이어 위치 복구 제어
             if (player != null)
             {
-                player.cController.enabled = false;
-                player.transform.position = data.playerPos;
-                player.cController.enabled = true;
+                if (player.cController != null) player.cController.enabled = false;
+
+                if (isRespawn)
+                {
+                    int targetID = 0;
+                    player.RespawnPlayerAtSpawnPoint(targetID);
+                }
+                else if (isPortalMoving)
+                {
+                    // 💡 문을 통해 이동 중일 때는 이미 DuskbornSceneManager가 플레이어를 배치했으므로 
+                    // 💡 세이브 파일의 옛날 좌표(playerPos)를 대입하지 않고 스킵합니다!
+                    Debug.Log($"[SaveManager] 구역 이동이 명시되어 세이브 파일의 좌표 대입을 스킵합니다.");
+                }
+                else
+                {
+                    // 타이틀에서 이어하기 할 때만 옛날 좌표 복구
+                    player.transform.position = data.playerPos;
+                }
+
+                if (player.cController != null) player.cController.enabled = true;
             }
 
-            // 체력 복구 
+            // 체력 복구
             if (playerHealth != null)
             {
-                playerHealth.SetHealth(data.currentHp); ;
+                if (isRespawn) playerHealth.SetHealth(playerHealth.maxHp);
+                else playerHealth.SetHealth(data.currentHp);
             }
 
-            // 인벤토리 복구
+            // 인벤토리 복구 (검 증발 방지)
             if (inventory != null)
             {
                 inventory.slots.Clear();
-
                 foreach (var itemData in data.inventoryItems)
                 {
                     Item item = ItemDataBase.Instance.GetItemId(itemData.itemId);
-                    if (item != null)
-                    {
-                        inventory.AddItem(item, itemData.amount);
-                    }
+                    if (item != null) inventory.AddItem(item, itemData.amount);
                 }
                 inventory.ForceUpdateUI();
             }
-            // 퀵슬롯 복구
-            if (weaponSlot != null) LoadQuickSlot(weaponSlot, data.quickSlotItems[0]);
-            if (armourSlot != null) LoadQuickSlot(armourSlot, data.quickSlotItems[1]);
-            if (potionSlot != null) LoadQuickSlot(potionSlot, data.quickSlotItems[2]);
 
+            // 퀵슬롯 복구
+            if (data.quickSlotItems != null)
+            {
+                if (data.quickSlotItems.Count > 0 && weaponSlot != null) LoadQuickSlot(weaponSlot, data.quickSlotItems[0]);
+                if (data.quickSlotItems.Count > 1 && armourSlot != null) LoadQuickSlot(armourSlot, data.quickSlotItems[1]);
+                if (data.quickSlotItems.Count > 2 && potionSlot != null) LoadQuickSlot(potionSlot, data.quickSlotItems[2]);
+            }
+
+            // 퀘스트 & NPC 복구 (기존 로직 유지)
             if (questManager != null)
             {
                 questManager.activeQuests.Clear();
                 questManager.completedQuests = data.completedQuestNames;
-
                 foreach (var qData in data.activeQuests)
                 {
-                    QuestSO so = Resources.Load<QuestSO>("Quests/" + qData.questName);          // Resources 안에 Quests 안에 questName 을 기준으로 찾음
-
+                    QuestSO so = Resources.Load<QuestSO>("Quests/" + qData.questName);
                     if (so != null)
                     {
-                        Quest restoredQuest = new Quest(so);
-                        restoredQuest.currentCount = qData.currentCount;
-
+                        Quest restoredQuest = new Quest(so) { currentCount = qData.currentCount };
                         questManager.activeQuests.Add(restoredQuest);
-                    }
-                    else
-                    {
-                        Debug.LogError("저장된 퀘스트 Scriptable Object 를 찾을 수 없습니다");
                     }
                 }
                 questManager.ForceUpdateUI();
-            }
 
-            // NPC 상태 복구 
-            if (questManager != null)
-            {
                 questManager.npcStateDict.Clear();
                 foreach (var npcData in data.npcDataList)
                 {
@@ -302,17 +404,25 @@ namespace KW
                 }
             }
 
-            // 저장된 파일에서 사망자 명단 복구
             deadMonsterIDs = new List<string>(data.deadMonsterIDs);
+            ReApplyEquippedItems();
 
+            if (player != null)
+            {
+                PlayerSceneConnector sceneConnector = player.GetComponent<PlayerSceneConnector>();
+                if (sceneConnector != null) sceneConnector.ConnectToSceneComponents();
+            }
 
-            PlayerSceneConnector sceneConnector = player.GetComponent<PlayerSceneConnector>();
+            if (isRespawn && UiManager.Instance != null)
+            {
+                UiManager.Instance.DoFadeOut(() =>
+                {
+                    UiManager.Instance.inGameUIScript?.gameObject.SetActive(true);
+                    UiManager.Instance.systemCanvasUIScript?.gameObject.SetActive(false);
+                });
+            }
 
-            sceneConnector.ConnectToSceneComponents();
-
-            Debug.Log("Game Loaded , Scene" + data.sceneName);
-
-            OnLoadGame.Invoke();
+            OnLoadGame?.Invoke();
         }
 
         public void DisplayBtn()
@@ -360,6 +470,12 @@ namespace KW
         public void ResetGame()
         {
             DeleteGame();
+
+            GameObject existingPlayer = GameObject.FindGameObjectWithTag("Player");
+            if (existingPlayer != null)
+            {
+                Destroy(existingPlayer);
+            }
 
             if (Instance != null)
                 Destroy(Instance.gameObject);

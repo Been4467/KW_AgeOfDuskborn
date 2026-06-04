@@ -72,6 +72,7 @@ MonoBehaviour:
     panelObject: {fileID: 0}
     isOpen: 0
   isRestMode: 0
+  isResponseMode: 0
   fadeGroup: {fileID: 0}
   fadeDuration: 1
   virtualCamera: {fileID: 0}

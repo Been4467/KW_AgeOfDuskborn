@@ -17,22 +17,26 @@ namespace KW
 
     public class MonsterDataParsing : MonoBehaviour
     {
-        public static MonsterDataParsing Instance { get; set; }
+        // 🛠️ 다른 코드와의 일관성을 위해 캡슐화를 private set으로 고치는 것이 안전합니다.
+        public static MonsterDataParsing Instance { get; private set; }
 
         private Dictionary<string, MonsterData> monsterData = new Dictionary<string, MonsterData>();
 
         private void Awake()
         {
-            if(Instance == null)
+            if (Instance == null)
             {
                 Instance = this;
-
                 DontDestroyOnLoad(gameObject);
             }
             else
             {
+                // 🛠️ 중요: 새로 생성된 복제본이면 파괴 예약 후 즉시 함수를 빠져나갑니다.
                 Destroy(gameObject);
+                return;
             }
+
+            // 진짜 인스턴스만 데이터를 로드합니다.
             LoadMonsterData();
         }
 
@@ -44,22 +48,22 @@ namespace KW
         private void LoadMonsterData()
         {
             TextAsset monsterDataCsv = Resources.Load<TextAsset>("MonsterDataParsing");
+            if (monsterDataCsv == null) return;
 
-            // 줄바꿈을 기준으로 데이터를 나눔 
             string[] lines = monsterDataCsv.text.Split('\n');
 
-            // 첫번째줄은 header 라 건너뛰고부터 인식
             for (int i = 1; i < lines.Length; i++)
             {
-                string line = lines[i].Trim();                      // 혹시 모를 공백 제거
+                string line = lines[i].Trim();
                 if (string.IsNullOrEmpty(line)) continue;
 
-                //  (",") 를 기준으로 셀의 데이터를 나눔
                 string[] columns = line.Split(',');
+
+                // 행 파싱 도중 생길 수 있는 예외 방지 (데이터 부족 등)
+                if (columns.Length < 7) continue;
 
                 MonsterData data = new MonsterData
                 {
-                    // float.Parse를 이용해 문자열을 float으로 변환
                     patrolSpeed = float.Parse(columns[1]),
                     chaseSpeed = float.Parse(columns[2]),
                     maxHp = float.Parse(columns[3]),
@@ -68,23 +72,28 @@ namespace KW
                     damage = float.Parse(columns[6])
                 };
 
-                string monsterID = columns[0];              
-                monsterData.Add(monsterID, data);                  // monsterID, data 를 dictionary값으로 저장
+                string monsterID = columns[0];
+
+                // 🛠️ 안전장치: 혹시 모를 중복 ID 파싱 에러 방지
+                if (!monsterData.ContainsKey(monsterID))
+                {
+                    monsterData.Add(monsterID, data);
+                }
             }
         }
 
-        // 외부에서 몬스터데이터를 요청할 때 사용하는 변수
         public MonsterData GetMonsterData(string monsterId)
         {
-            if (monsterData.ContainsKey(monsterId))
+            if (monsterData.TryGetValue(monsterId, out MonsterData data))
             {
-                return monsterData[monsterId];
+                return data;
             }
             else
             {
                 Debug.LogError("Monster ID not found in CSV: " + monsterId);
-                return new MonsterData(); // 기본값 반환
+                return new MonsterData();
             }
         }
+
     }
 }

@@ -16,11 +16,8 @@ namespace KW
 
         [Header("팝업 설정")]
         [SerializeField] private GameObject itemLootPopupPrefab;                // 팝업 창 프리팹
-
         [SerializeField] private GameObject itemLootLinePrefab;                 // 아이템 1줄 프리팹
-
         [SerializeField] private GameObject messageLinePrefab;                  // 일반 알림창 프리팹
-
         [SerializeField] private Transform popupHolder;                         // 팝업이 생성될 위치
 
         private void Awake()
@@ -33,8 +30,10 @@ namespace KW
             else
             {
                 Destroy(gameObject);
+                return; // 👈 가짜 오브젝트의 하위 실행을 완벽히 차단하는 브레이크
             }
         }
+
         private void OnEnable()
         {
             SceneManager.sceneLoaded += OnSceneLoaded;
@@ -55,34 +54,35 @@ namespace KW
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
+            if (Instance != this) return; // 🛠️ 진짜 인스턴스만 실행하도록 필터링
             if (scene.name == "LoadingScene") return;
 
-            // InGameUI가 등록될 때까지 기다리거나, 여기서 직접 찾기
-            // (가장 확실한 건 InGameUI가 등록해주는 거지만, 늦을 수 있으니 찾기 시도)
+            // 🛠️ 씬 이동 시 구형 참조 찌꺼기(Missing)를 확실하게 청소
+            ingameUi = null;
+            popupHolder = null;
+
             if (ingameUi == null)
             {
-                ingameUi = FindObjectOfType<InGameUI>();
+                ingameUi = FindObjectOfType<InGameUI>(true); // 비활성화 상태도 고려하여 찾기
             }
 
             FindPopupHolder();
         }
 
-        // 팝업 홀더 찾는 함수 분리
         public void FindPopupHolder()
         {
             if (ingameUi != null)
             {
-                // "PopupHolder"라는 이름의 자식을 찾음
                 Transform holder = ingameUi.transform.Find("PopupHolder");
 
-                // 만약 바로 아래 자식이 아니라면 전체 검색
                 if (holder == null)
                 {
-                    // (InGameUI 스크립트에 public Transform popupHolder 변수를 만들어서 연결해두는 게 가장 좋음!)
-                    // 임시: 이름으로 재귀 검색 (비추천하지만 작동은 함)
-                    foreach (Transform t in ingameUi.GetComponentsInChildren<Transform>(true))
+                    // 최적화를 위해 GetComponentsInChildren 보다는 변수 직접 연결을 권장하지만, 
+                    // 현재 구조 유지를 위해 안전하게 예외처리 추가
+                    var allTransforms = ingameUi.GetComponentsInChildren<Transform>(true);
+                    foreach (Transform t in allTransforms)
                     {
-                        if (t.name == "PopupHolder")
+                        if (t != null && t.name == "PopupHolder")
                         {
                             holder = t;
                             break;
@@ -94,104 +94,132 @@ namespace KW
 
             if (popupHolder == null)
             {
-                Debug.LogWarning("[NotificationManager] PopupHolder를 찾지 못했습니다.");
+                Debug.LogWarning("[NotificationManager] PopupHolder를 찾지 못했습니다. (UI가 없는 씬일 수 있음)");
             }
         }
+
         void Start()
         {
             FindPopupHolder();
 
-            GameObject popupHolderObj = popupHolder.transform.gameObject;
-
-            if (popupHolderObj != null)
+            // 🛠️ 버그 수정: popupHolder가 null일 때 .transform.gameObject 접근 시 크래시나는 현상 방지
+            if (popupHolder != null)
             {
                 Debug.Log("[NotificationManager] 팝업을 담을 오브젝트를 찾음");
             }
             else
             {
-                Debug.LogError("[NotificationManager] 팝업을 담을 오브젝트를 찾지 못함");
+                Debug.LogWarning("[NotificationManager] 초기 시작 시 팝업 홀더가 없습니다. 인게임 진입 후 재탐색합니다.");
             }
         }
-
 
         #region [Chest] 아이템을 획득했을 때 뜨는 팝업
         public void ShowLootPopup(List<ChestSlot> items)
         {
-            Time.timeScale = 0.00001f;
+            if (items == null || items.Count == 0) return;
 
-            // 팝업 창 생성
+            // 껍데기 생성 (여기에 일시정지 로직 포함됨)
             GameObject popupObj = CreatePopupBase();
+            if (popupObj == null) return;
 
-            if (popupObj != null) Debug.Log("Notification Manager : 팝업 생성됨");
-            else Debug.LogWarning("Notification Manager : 팝업 생성 안됨");
+            Debug.Log("Notification Manager : 팝업 생성됨");
 
-            // 팝업 창 안에서 아이템 1줄이 생성될 위치 찾기
             Transform lineHolder = popupObj.transform.Find("LineHolder");
+            if (lineHolder == null)
+            {
+                Debug.LogError("[NotificationManager] 프리팹 내부에 'LineHolder' 자식이 없습니다.");
+                return;
+            }
 
             foreach (ChestSlot slot in items)
             {
-                // 아이템 1 줄 프리팹을 LineHolder의 자식으로 생성함
+                if (slot.item == null) continue;
+
                 GameObject lineObj = Instantiate(itemLootLinePrefab, lineHolder);
 
-                Image itemIcon = lineObj.transform.Find("ItemSprite").GetComponent<Image>();
-                TextMeshProUGUI text = lineObj.transform.Find("ItemName").GetComponent<TextMeshProUGUI>();
+                Transform iconTransform = lineObj.transform.Find("ItemSprite");
+                Transform nameTransform = lineObj.transform.Find("ItemName");
 
-                if (itemIcon != null)
-                    itemIcon.sprite = slot.item.itemSprite;                     // Item 의 itemSprite
+                if (iconTransform != null)
+                {
+                    Image itemIcon = iconTransform.GetComponent<Image>();
+                    if (itemIcon != null) itemIcon.sprite = slot.item.itemSprite;
+                }
 
-                if (text != null)
-                    text.text = $"{slot.item.itemName}이(가) x{slot.quantity}개 추가됐다.";
+                if (nameTransform != null)
+                {
+                    TextMeshProUGUI text = nameTransform.GetComponent<TextMeshProUGUI>();
+                    if (text != null) text.text = $"{slot.item.itemName}이(가) x{slot.quantity}개 추가됐다.";
+                }
             }
-
-
         }
         #endregion
 
         #region 일반 팝업
         public void ShowMessage(string message, Action onConfirm = null)
         {
-            // 껍데기 생성
             GameObject popupObj = CreatePopupBase(onConfirm);
+            if (popupObj == null) return;
+
             Transform lineHolder = popupObj.transform.Find("LineHolder");
+            if (lineHolder == null) return;
 
-            // 내용물 채우기
             GameObject lineObj = Instantiate(messageLinePrefab, lineHolder);
-
             TextMeshProUGUI textComp = lineObj.GetComponentInChildren<TextMeshProUGUI>();
 
             if (textComp != null)
             {
                 textComp.text = message;
             }
-
         }
-
         #endregion
-
 
         private GameObject CreatePopupBase(Action onExternalConfirm = null)
         {
+            // 🛠️ 팝업을 띄울 홀더가 유실되었다면 긴급 재탐색
+            if (popupHolder == null)
+            {
+                FindPopupHolder();
+                if (popupHolder == null)
+                {
+                    Debug.LogError("[NotificationManager] 팝업을 생성할 PopupHolder가 하이어라키에 없습니다!");
+                    return null;
+                }
+            }
+
             Time.timeScale = 0.00001f; // 일시정지
-
-
 
             GameObject popupObj = Instantiate(itemLootPopupPrefab, popupHolder);
 
-            // 닫기 버튼 공통 로직
-            Button confirmBtn = popupObj.transform.Find("ConfirmBtn").GetComponent<Button>();
-            if (confirmBtn != null)
+            Transform confirmBtnTransform = popupObj.transform.Find("ConfirmBtn");
+            if (confirmBtnTransform != null)
             {
-                confirmBtn.onClick.AddListener(() =>
+                Button confirmBtn = confirmBtnTransform.GetComponent<Button>();
+                if (confirmBtn != null)
                 {
-                    Time.timeScale = 1f; // 재개
+                    confirmBtn.onClick.RemoveAllListeners();
+                    confirmBtn.onClick.AddListener(() =>
+                    {
+                        onExternalConfirm?.Invoke();
+                        Destroy(popupObj);
 
-                    onExternalConfirm?.Invoke();
-
-                    Destroy(popupObj);
-                });
+                        // 🛠️ 중요 안전장치: 현재 팝업을 지우고 나서도 홀더 자식에 다른 팝업이 여전히 남아있다면, 
+                        // 시간을 흐르게 하지 않고 일시정지 상태를 유지합니다. (다중 팝업 처리)
+                        // 한 프레임 뒤에 자식 개수를 검사하기 위해 람다식 안에서 연산 처리
+                        Invoke(nameof(CheckRemainingPopups), 0f);
+                    });
+                }
             }
 
             return popupObj;
+        }
+
+        private void CheckRemainingPopups()
+        {
+            if (popupHolder != null && popupHolder.childCount == 0)
+            {
+                Time.timeScale = 1f; // 남은 팝업이 정말로 없을 때만 게임 시간 재개
+            }
         }
     }
 }

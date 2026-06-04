@@ -18,7 +18,13 @@ namespace KW
 
         private void Start()
         {
-             if(SaveManager.Instance != null)
+            // 🛡️ 가짜 방어막: 내가 진짜 플레이어 몸통에 붙은 게 아니라면, SaveManager를 오염시키지 말고 즉시 탈출!
+            if (PlayerSceneConnector.Instance != null && PlayerSceneConnector.Instance.gameObject != this.gameObject)
+            {
+                return;
+            }
+
+            if (SaveManager.Instance != null)
             {
                 SaveManager.Instance.inventory = this;
             }

@@ -2635,7 +2635,7 @@ GameObject:
   - component: {fileID: 761965087740115827}
   - component: {fileID: 2258265687384774846}
   m_Layer: 5
-  m_Name: QuestScreen
+  m_Name: Quest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2686,7 +2686,7 @@ GameObject:
   - component: {fileID: 3922539134134401868}
   - component: {fileID: 7009626203493756233}
   m_Layer: 5
-  m_Name: InventroyScreen
+  m_Name: Inventory
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3080,7 +3080,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2427507419216211003}
   m_Layer: 5
-  m_Name: SettingsScreen
+  m_Name: Settings
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5123,7 +5123,7 @@ GameObject:
   - component: {fileID: 888491677761813053}
   - component: {fileID: 6052723660267294347}
   m_Layer: 5
-  m_Name: MapScreen
+  m_Name: Map
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

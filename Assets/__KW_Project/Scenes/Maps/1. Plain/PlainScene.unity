@@ -143,11 +143,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.1058823, y: 0.8188473, z: 2.5493188}
   m_Center: {x: 0.03877598, y: 0.40728277, z: 0.038806498}
---- !u!1 &4390951 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3745289148433815685, guid: d678b16c60f055243a00bdf4e96b180d, type: 3}
-  m_PrefabInstance: {fileID: 466902016}
-  m_PrefabAsset: {fileID: 0}
 --- !u!65 &6566143
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -283,10 +278,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1132360710}
     - target: {fileID: 8254192834739439423, guid: 6c6e8a0520e5280489e3678f3ed6996d, type: 3}
-      propertyPath: uiPanels.Array.size
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 8254192834739439423, guid: 6c6e8a0520e5280489e3678f3ed6996d, type: 3}
       propertyPath: uiPanels.Array.data[0].panelObject
       value: 
       objectReference: {fileID: 466902020}
@@ -302,10 +293,6 @@ PrefabInstance:
       propertyPath: uiPanels.Array.data[3].panelObject
       value: 
       objectReference: {fileID: 466902017}
-    - target: {fileID: 8254192834739439423, guid: 6c6e8a0520e5280489e3678f3ed6996d, type: 3}
-      propertyPath: uiPanels.Array.data[4].panelObject
-      value: 
-      objectReference: {fileID: 4390951}
     - target: {fileID: 8469988726022191005, guid: 6c6e8a0520e5280489e3678f3ed6996d, type: 3}
       propertyPath: healthText
       value: 
@@ -9434,18 +9421,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1713194821316035354, guid: f0d65aeff69cc4b4ca9e8a88ae622c39, type: 3}
-      propertyPath: fieldMonters.Array.data[0]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1713194821316035354, guid: f0d65aeff69cc4b4ca9e8a88ae622c39, type: 3}
-      propertyPath: fieldMonters.Array.data[1]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1713194821316035354, guid: f0d65aeff69cc4b4ca9e8a88ae622c39, type: 3}
-      propertyPath: fieldMonters.Array.data[2]
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 3562012686124432100, guid: f0d65aeff69cc4b4ca9e8a88ae622c39, type: 3}
       propertyPath: m_Name
       value: FieldLevelManager

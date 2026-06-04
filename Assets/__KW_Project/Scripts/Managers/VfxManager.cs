@@ -14,6 +14,7 @@ namespace KW
         Slash,
         StepDust
     }
+
     public class VfxManager : MonoBehaviour
     {
         public static VfxManager Instance { get; private set; }
@@ -29,10 +30,7 @@ namespace KW
         [Header("동록할 이펙트 목록")]
         [SerializeField] private List<VfxData> vfxList;
 
-        // 실제 풀 (Key: 타입, Value: 큐)
         private Dictionary<VfxType, Queue<GameObject>> pools = new Dictionary<VfxType, Queue<GameObject>>();
-
-        // 부모 딕셔너리
         private Dictionary<VfxType, Transform> parents = new Dictionary<VfxType, Transform>();
 
         private void Awake()
@@ -45,12 +43,15 @@ namespace KW
             }
             else
             {
+                // 🛠️ 중요: 파괴 예약 후 즉시 return하여 InitializePools()가 중복 호출되는 것을 막습니다.
                 Destroy(gameObject);
+                return;
             }
         }
 
         private void OnDestroy()
         {
+            // 🛠️ 보완: 파괴되는 내가 '진짜 인스턴스'일 때만 스태틱 참조를 비웁니다.
             if (Instance == this)
             {
                 Instance = null;
@@ -61,16 +62,12 @@ namespace KW
         {
             foreach (var data in vfxList)
             {
-                // 종류별 폴더(부모) 생성
                 GameObject parentObj = new GameObject(data.type.ToString() + "_Pool");
-
                 parentObj.transform.SetParent(this.transform);
                 parents.Add(data.type, parentObj.transform);
 
-                // 큐 생성
                 Queue<GameObject> queue = new Queue<GameObject>();
 
-                // 미리 생성해서 채워넣기
                 for (int i = 0; i < data.poolSize; i++)
                 {
                     GameObject obj = Instantiate(data.prefab, parentObj.transform);
@@ -87,14 +84,12 @@ namespace KW
             if (!pools.ContainsKey(type))
             {
                 Debug.LogWarning($"[VfxManager] {type} 이펙트가 등록되지 않음");
-
                 return;
             }
 
             Queue<GameObject> queue = pools[type];
             GameObject obj;
 
-            // 풀에 남은 게 없으면 새로 만들어서 씀 (유연하게 확장)
             if (queue.Count == 0 || queue.Peek().activeSelf)
             {
                 VfxData data = vfxList.Find(x => x.type == type);
@@ -105,14 +100,11 @@ namespace KW
                 obj = queue.Dequeue();
             }
 
-            // 위치 설정 및 활성화
             obj.transform.position = position;
             obj.transform.rotation = rotation;
             obj.SetActive(true);
 
-            // 다시 큐에 넣어서 재사용 준비
             queue.Enqueue(obj);
         }
-
     }
 }

@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -21,20 +20,12 @@ namespace KW
             else
             {
                 Destroy(gameObject);
-                return;
+                return; // 👈 가짜 오브젝트의 하위 실행을 완벽히 차단
             }
-            /*    if (UiManager.Instance != null)
-             {
-                 UiManager.Instance.RegisterSystemCanvas(this.gameObject);
-             }
 
-             if (DialogueManager.Instance != null)
-             {
-                 DialogueManager.Instance.RegisterSystemCanvas(this.gameObject);
-             } */
+            RegisterToManagers();
+        }
 
-             RegisterToManagers();
-        }      
         private void OnEnable()
         {
             SceneManager.sceneLoaded += OnSceneLoaded;
@@ -55,10 +46,13 @@ namespace KW
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
+            // 🛠️ 핵심 수정: 파괴되기 직전의 가짜 복제본이 다른 매니저들을 오염시키는 것을 절대 차단!
+            if (Instance != this) return;
+
             RegisterToManagers();
         }
 
-        // [핵심] 등록 로직 분리
+        // 등록 로직 분리
         private void RegisterToManagers()
         {
             if (UiManager.Instance != null)
@@ -70,8 +64,8 @@ namespace KW
             {
                 DialogueManager.Instance.RegisterSystemCanvas(this.gameObject);
             }
-            
-            // Debug.Log("[SystemCanvasUI] 매니저들에 재등록 완료");
+
+            // Debug.Log("[SystemCanvasUI] 진짜 인스턴스가 매니저들에 재등록 완료");
         }
 
         public void ToggleGameMode(bool gameModeToToggle)

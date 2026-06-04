@@ -12019,8 +12019,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b922a3b8d5c75c143b7a72be1adb9a7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneToLoad: ChurchDungeon_Room.2
-  spawnPointID: 0
+  sceneToLoad: ChurchDungeon_Room.1
+  spawnPointID: 1
 --- !u!65 &2142349090
 BoxCollider:
   m_ObjectHideFlags: 0

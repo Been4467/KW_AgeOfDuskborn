@@ -20,16 +20,15 @@ namespace KW
     {
         public static UiManager Instance { get; private set; }
 
-        public static event Action<bool> OnAnyUiStateChanged;           // 패널이 열고 닫을 때 호출 되는 이벤트 (PlayerMovement에서구독함)
-        public static event Action OnDeathed;           // 죽었을 때 호출 되는 이벤트 (PlayerMovement에서구독함)
+        public static event Action<bool> OnAnyUiStateChanged; // 패널 열고 닫힐 때 호출
+        public static event Action OnDeathed;               // 죽었을 때 호출
 
         [SerializeField] private GameObject ingameUi;
         public InGameUI inGameUIScript;
         [SerializeField] private GameObject systemCanvas;
         public SystemCanvasUI systemCanvasUIScript;
 
-        [SerializeField] private List<UiPanel> uiPanels;                // 각 (인벤/맵/설정/퀘스트) 패널을 담을 리스트
-
+        [SerializeField] private List<UiPanel> uiPanels; // 각 (인벤/맵/설정/퀘스트) 패널 리스트
         [SerializeField] private UiPanel currentOpenPanel = null;
 
         [Header("휴식 상태")]
@@ -52,11 +51,12 @@ namespace KW
             if (Instance == null)
             {
                 Instance = this;
-                DontDestroyOnLoad(this);
+                DontDestroyOnLoad(gameObject);
             }
             else
             {
                 Destroy(gameObject);
+                return;
             }
         }
 
@@ -66,7 +66,6 @@ namespace KW
             {
                 OnAnyUiStateChanged = null;
                 OnDeathed = null;
-                
                 Instance = null;
             }
         }
@@ -83,7 +82,10 @@ namespace KW
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            InitializeUI();
+            if (Instance == this)
+            {
+                InitializeUI();
+            }
         }
 
         public void RegisterSystemCanvas(GameObject canvasObj)
@@ -98,103 +100,118 @@ namespace KW
 
         private void InitializeUI()
         {
-            // 스크립트가 없으면 씬에서 찾기 (안전장치)
+            virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
+
             if (inGameUIScript == null) inGameUIScript = FindObjectOfType<InGameUI>(true);
             if (systemCanvasUIScript == null) systemCanvasUIScript = FindObjectOfType<SystemCanvasUI>(true);
 
-            // GameObject 연결 및 초기화
             if (inGameUIScript != null)
             {
                 ingameUi = inGameUIScript.gameObject;
-                ingameUi.SetActive(true);
             }
 
             if (systemCanvasUIScript != null)
             {
                 systemCanvas = systemCanvasUIScript.gameObject;
+
+                // 🛠️ [핵심] 자식 패널들을 찾기 위해 임시로 활성화합니다.
                 systemCanvas.SetActive(true);
+                RebindUiPanels(systemCanvas.transform);
             }
 
-            // 패널들 초기화 (비활성화)
-            // 주의: SystemCanvas 자식들을 찾아 연결하는 로직이 필요하다면 여기 추가해야 함
+            currentOpenPanel = null;
+            Time.timeScale = 1f;
+
+            // 모든 패널 상태 및 오브젝트 강제 초기화 (비활성화)
             foreach (var panel in uiPanels)
             {
+                panel.isOpen = false;
                 if (panel.panelObject != null)
                 {
                     panel.panelObject.SetActive(false);
-                    panel.isOpen = false;
                 }
             }
 
+            // 🛠️ [원하시는 초기 상태 설정] 
+            // 게임 시작 및 씬 로드 시 인게임 UI는 켜고, 시스템 캔버스는 완전히 끕니다.
             if (ingameUi != null) ingameUi.SetActive(true);
-            if (systemCanvas != null) systemCanvas.SetActive(false); // 평소엔 꺼둠
+            if (systemCanvas != null) systemCanvas.SetActive(false);
+        }
+
+        private void RebindUiPanels(Transform canvasRoot)
+        {
+            foreach (var panel in uiPanels)
+            {
+                Transform foundPanel = canvasRoot.Find(panel.name);
+                if (foundPanel != null)
+                {
+                    panel.panelObject = foundPanel.gameObject;
+                }
+                else
+                {
+                    panel.panelObject = FindChildPanelRecursively(canvasRoot, panel.name);
+                }
+
+                // 패널을 못 찾았을 때 디버그 경고창 출력
+                if (panel.panelObject == null)
+                {
+                    Debug.LogError($"[UiManager] '{panel.name}' 패널을 하이어라키에서 찾을 수 없습니다. 대소문자를 확인하세요.");
+                }
+            }
+        }
+
+        private GameObject FindChildPanelRecursively(Transform current, string targetName)
+        {
+            if (current.name == targetName) return current.gameObject;
+            for (int i = 0; i < current.childCount; i++)
+            {
+                GameObject result = FindChildPanelRecursively(current.GetChild(i), targetName);
+                if (result != null) return result;
+            }
+            return null;
         }
 
         private void Start()
         {
-            if (inGameUIScript != null)
-            {
-                // Debug.Log("[UiManager] 인게임Ui 등록완료");
-                ingameUi = inGameUIScript.transform.gameObject;
-                ingameUi.SetActive(true);
-            }
-            if (systemCanvasUIScript != null)
-            {
-                // Debug.Log("[UiManager] 시스템Ui 등록완료");
-                systemCanvas = systemCanvasUIScript.transform.gameObject;
-                systemCanvas.SetActive(true);
-            }
-
-            foreach (var panel in uiPanels)
-            {
-                panel.panelObject.SetActive(false);                     // 패널 클래스를 가진 패널 각각 setActive(false)
-                panel.isOpen = false;
-            }
-            ingameUi.SetActive(true);                                   // 게임 실행 시 인게임 캔버스 on
-            systemCanvas.SetActive(false);                              // 게임 실행 시 시스템 캔버스 off
+            InitializeUI();
         }
 
         private void Update()
         {
-            if (DialogueManager.isDialogueActive)
-            {
-                return;
-            }
-
+            if (DialogueManager.isDialogueActive) return;
             if (isResponseMode || isRestMode) return;
 
-            if (currentOpenPanel != null && Input.GetKeyDown(KeyCode.Escape))   // 열려있는 게 있으면 우선적으로 닫음
+            if (currentOpenPanel != null && Input.GetKeyDown(KeyCode.Escape))
             {
                 TogglePanel(currentOpenPanel);
                 return;
             }
-            foreach (var panel in uiPanels)                                     // 열려있는 게 없으면 선택된 패널을 연다
+            foreach (var panel in uiPanels)
             {
                 if (Input.GetKeyDown(panel.key))
                 {
                     TogglePanel(panel);
-                    return;                                             // 한 프레임에 하나의 입력 처리
+                    return;
                 }
             }
         }
 
         private void TogglePanel(UiPanel panelToToggle)
         {
-            if (currentOpenPanel == panelToToggle)                      // 현재 열려있는 게 panelToToggle이면 -> 끄기
+            if (currentOpenPanel == panelToToggle)
             {
                 currentOpenPanel = null;
             }
-            else                                                        // 열려있는게 없으면                  -> 열기
+            else
             {
                 currentOpenPanel = panelToToggle;
             }
             UpdateAllPanelViews();
-            OnAnyUiStateChanged?.Invoke(currentOpenPanel != null);      // currentOpenPanel 이 있으면 이벤트 호출
+            OnAnyUiStateChanged?.Invoke(currentOpenPanel != null);
         }
 
         private void UpdateAllPanelViews()
         {
-            // currenOpenPanel 이 있거나, 외부 팝업창이 열려있으면 true
             bool isAnyUiOpen = (currentOpenPanel != null);
 
             if (isAnyUiOpen)
@@ -206,30 +223,29 @@ namespace KW
                 Time.timeScale = 1f;
             }
 
-            ingameUi.SetActive(!isAnyUiOpen);
-            systemCanvas.SetActive(isAnyUiOpen);
+            // 🛠️ [요구사항 반영] UI가 켜지면 InGameUI는 꺼지고, 닫히면 InGameUI가 켜집니다.
+            if (ingameUi != null) ingameUi.SetActive(!isAnyUiOpen);
+
+            // 🛠️ [요구사항 반영] UI가 하나라도 열리면 SystemCanvas를 켜고, 다 닫히면 니다.
+            if (systemCanvas != null) systemCanvas.SetActive(isAnyUiOpen);
 
             foreach (var panel in uiPanels)
             {
-                panel.isOpen = (panel == currentOpenPanel);             // 해당 panel 이 현재 열려있는 패널이면 isOpen
-                panel.panelObject.SetActive(panel.isOpen);              // isOpen 이 true 면 해당 패널 오브젝트 SetActive
+                if (panel.panelObject != null)
+                {
+                    panel.isOpen = (panel == currentOpenPanel);
+                    panel.panelObject.SetActive(panel.isOpen);
+                }
             }
-
-            // OnAnyUiStateChanged?.Invoke(isAnyUiOpen);
         }
 
-        // 패널의 버튼을 위한 함수
         public void OpenPanelByName(string panelName)
         {
-            // 'IsPanelMatch'라는 이름의 함수를 조건으로 사용해 패널을 찾습니다.
             UiPanel panelToOpen = FindPanelUsingFunction(panelName);
 
-            if (currentOpenPanel == panelToOpen)                         // 버튼으로 패널을 열 때, 현재 열려있는게 열어야 될 패널이면 버튼으로 꺼지지 않게끔 반환
-            {
-                return;
-            }
+            if (currentOpenPanel == panelToOpen) return;
 
-            if (panelToOpen != null)                                    // 열어야 될 패널이 있으면(들어온 값이 있다), toggleOpen실행
+            if (panelToOpen != null)
             {
                 TogglePanel(panelToOpen);
             }
@@ -237,18 +253,10 @@ namespace KW
 
         private UiPanel FindPanelUsingFunction(string nameToFind)
         {
-            // 리스트의 모든 패널을 처음부터 끝까지 확인합니다.
             foreach (var panel in uiPanels)
             {
-                // 만약 현재 확인 중인 패널의 이름이 우리가 찾으려는 이름과 같다면
-                if (panel.name == nameToFind)
-                {
-                    // 바로 그 패널을 반환하고 함수를 종료합니다.
-                    return panel;
-                }
+                if (panel.name == nameToFind) return panel;
             }
-
-            // 루프가 끝날 때까지 찾지 못했다면 null을 반환합니다.
             return null;
         }
 
@@ -256,25 +264,24 @@ namespace KW
         {
             isRestMode = true;
 
-            ingameUi.SetActive(!isRestMode);
-            systemCanvas.SetActive(isRestMode);
-            systemCanvasUIScript.ToggleGameMode(!isRestMode);
+            if (ingameUi != null) ingameUi.SetActive(!isRestMode);
+            if (systemCanvas != null) systemCanvas.SetActive(isRestMode);
+            if (systemCanvasUIScript != null) systemCanvasUIScript.ToggleGameMode(!isRestMode);
 
             OnAnyUiStateChanged?.Invoke(true);
 
             DoFadeIn(() =>
-             {
-                 if (virtualCamera != null)
-                     virtualCamera.m_Lens.FieldOfView = restingFOV;
+            {
+                if (virtualCamera != null)
+                    virtualCamera.m_Lens.FieldOfView = restingFOV;
 
-                 Invoke(nameof(EndRestMode), 0.5f);
-             });
+                Invoke(nameof(EndRestMode), 0.5f);
+            });
         }
 
         private void EndRestMode()
         {
-            systemCanvasUIScript.ToggleRestMode(isRestMode);
-
+            if (systemCanvasUIScript != null) systemCanvasUIScript.ToggleRestMode(isRestMode);
             DoFadeOut(null);
         }
 
@@ -282,7 +289,7 @@ namespace KW
         {
             isRestMode = false;
 
-            systemCanvasUIScript.ToggleRestMode(isRestMode);
+            if (systemCanvasUIScript != null) systemCanvasUIScript.ToggleRestMode(isRestMode);
 
             DoFadeIn(() =>
             {
@@ -295,9 +302,9 @@ namespace KW
 
         private void EndGameMode()
         {
-            ingameUi.SetActive(!isRestMode);
-            systemCanvas.SetActive(isRestMode);
-            systemCanvasUIScript.ToggleGameMode(!isRestMode);
+            if (ingameUi != null) ingameUi.SetActive(!isRestMode);
+            if (systemCanvas != null) systemCanvas.SetActive(isRestMode);
+            if (systemCanvasUIScript != null) systemCanvasUIScript.ToggleGameMode(!isRestMode);
 
             DoFadeOut(() =>
             {
@@ -309,28 +316,63 @@ namespace KW
         {
             isResponseMode = true;
 
-            systemCanvas.SetActive(isResponseMode);
-            systemCanvasUIScript.ToggleGameMode(!isResponseMode);
+            if (systemCanvas != null) systemCanvas.SetActive(isResponseMode);
+            if (systemCanvasUIScript != null) systemCanvasUIScript.ToggleGameMode(!isResponseMode);
 
+            // 1. 화면을 암전(FadeIn) 시킨다.
             DoFadeIn(() =>
             {
+                // 2. 완전히 어두워지면 0.5초 대기 후 부활 실무 로직(EndResponse) 호출
                 Invoke(nameof(EndResponse), 0.5f);
             });
         }
 
         private void EndResponse()
         {
-            OnDeathed.Invoke();
+            Debug.Log("[UiManager] EndResponse - 부활 프로세스 시작 (화면 암전 상태)");
+            isResponseMode = false;
 
-            DoFadeOut(() =>
+            if (systemCanvas != null) systemCanvas.SetActive(isRestMode);
+            if (systemCanvasUIScript != null) systemCanvasUIScript.ToggleGameMode(!isRestMode);
+
+            if (SaveManager.Instance != null)
             {
-                Debug.Log("[UiManager] EndResponse");
+                string checkPath = Application.persistentDataPath + "/saveGame.json";
 
-                isResponseMode = false;
+                if (System.IO.File.Exists(checkPath))
+                {
+                    Debug.Log("[UiManager] 세이브 파일이 존재하므로 씬 전환 및 데이터 로드를 시작합니다.");
+                    // ★ 중요: 여기서 로드를 시작하면 SaveManager가 로드 완료 후 페이드 아웃을 켜줄 것입니다.
+                    SaveManager.Instance.LoadGame(isRespawn: true);
+                }
+                else
+                {
+                    Debug.LogWarning("[UiManager] 세이브 파일이 없습니다. 현재 씬에서 즉시 부활합니다.");
 
-                systemCanvas.SetActive(isRestMode);
-                systemCanvasUIScript.ToggleGameMode(!isRestMode);
-            });
+                    SaveManager.Instance.ReApplyEquippedItems();
+
+                    if (SaveManager.Instance.player != null)
+                    {
+                        if (SaveManager.Instance.player.cController != null)
+                            SaveManager.Instance.player.cController.enabled = false;
+
+                        SaveManager.Instance.player.RespawnPlayerAtSpawnPoint(0);
+
+                        if (SaveManager.Instance.player.cController != null)
+                            SaveManager.Instance.player.cController.enabled = true;
+                    }
+
+                    if (SaveManager.Instance.playerHealth != null)
+                    {
+                        SaveManager.Instance.playerHealth.SetHealth(SaveManager.Instance.playerHealth.maxHp);
+                    }
+
+                    // 세이브가 없는 경우엔 씬 이동이 없으므로, 여기서 즉시 페이드 아웃을 해줍니다.
+                    DoFadeOut(() => {
+                        OnAnyUiStateChanged?.Invoke(false);
+                    });
+                }
+            }
         }
 
         public void DoFadeIn(Action onComplete)
@@ -351,10 +393,10 @@ namespace KW
             while (timer < fadeDuration)
             {
                 timer += Time.unscaledDeltaTime;
-                fadeGroup.alpha = Mathf.Lerp(start, end, timer / fadeDuration);
+                if (fadeGroup != null) fadeGroup.alpha = Mathf.Lerp(start, end, timer / fadeDuration);
                 yield return null;
             }
-            fadeGroup.alpha = end;
+            if (fadeGroup != null) fadeGroup.alpha = end;
             onComplete?.Invoke();
         }
     }

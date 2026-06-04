@@ -34,28 +34,37 @@ namespace KW
 
         private void Awake()
         {
+            player = GetComponent<PlayerMovement>(); // 추가
+
             if (player != null)
             {
                 player.playerHealth = this;
                 Debug.Log("[PlayerHealth] 플레이어에 등록 완료!");
             }
         }
+
         private void Start()
         {
+            // 🛡️ 가짜 방어막: 내가 가짜 플레이어라면 데이터를 초기화하거나 SaveManager에 등록하지 못하게 차단!
+            if (PlayerSceneConnector.Instance != null && PlayerSceneConnector.Instance.gameObject != this.gameObject)
+            {
+                return;
+            }
+
             if (SaveManager.Instance != null)
             {
                 SaveManager.Instance.playerHealth = this;
             }
-           
 
             _currentHp = _maxHp;
-
             OnHealthChanged?.Invoke(_currentHp, _maxHp);
         }
 
         private void OnDestroy()
         {
             OnHealthChanged = null;
+            OnPlayerDied = null;
+            OnPlayerHit = null;
         }
 
 

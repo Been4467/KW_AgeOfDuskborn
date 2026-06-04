@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement; // 👈 🛠️ 씬 로드 이벤트를 위해 추가
 
 namespace KW
 {
@@ -43,13 +44,90 @@ namespace KW
         // NPC 상태 저장소 (Key : NpcID, Value : 상태 데이터)
         public Dictionary<string, NpcData> npcStateDict = new Dictionary<string, NpcData>();
 
-
         public List<Quest> trackedQuests = new List<Quest>();
 
         public event Action OnTrackListUpdated;                         // 추적 상태 변경 시 UI에게 알림 
         public event Action OnQuestListUpdated;
 
         private Inventory playerInventory;
+
+        private void Awake()
+        {
+            if (Instance == null)
+            {
+                Instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                // 🛠️ 버그 수정: 컴포넌트(this)만 지우면 빈 게임오브젝트 껍데기가 남으므로 gameObject를 파괴
+                Destroy(gameObject);
+                return; // 👈 가짜 오브젝트의 오작동을 차단하는 브레이크
+            }
+
+            // 🛠️ 안전장치: 데이터 로딩 시점 꼬임을 막기 위해 Awake에서 미리 SaveManager에 연결 시도
+            if (SaveManager.Instance != null)
+            {
+                SaveManager.Instance.questManager = this;
+            }
+        }
+
+        private void OnEnable()
+        {
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+
+        private void OnDisable()
+        {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+        }
+
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            if (Instance != this) return; // 🛠️ 진짜 인스턴스만 실행하도록 필터링
+            if (scene.name == "LoadingScene") return;
+
+            // 🛠️ 핵심 수정: 씬이 바뀔 때마다 플레이어 인벤토리 참조를 확실하게 갱신 (유령 참조 방지)
+            FindPlayerInventory();
+        }
+
+        private void Start()
+        {
+            // 백업 등록용
+            if (SaveManager.Instance != null && SaveManager.Instance.questManager == null)
+            {
+                SaveManager.Instance.questManager = this;
+            }
+
+            FindPlayerInventory();
+        }
+
+        // 🛠️ 인벤토리 탐색 로직 분리 및 안정화
+        private void FindPlayerInventory()
+        {
+            playerInventory = null; // 기존 구형 찌꺼기 제거
+
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null)
+            {
+                playerInventory = player.GetComponent<Inventory>();
+            }
+            else
+            {
+                Debug.LogWarning("[QuestManager] 'Player' 태그를 가진 오브젝트를 현재 씬에서 찾을 수 없습니다. (인게임 진입 후 재탐색)");
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (Instance == this)
+            {
+                OnTrackListUpdated = null;
+                OnQuestListUpdated = null;
+
+                Instance = null;
+            }
+        }
 
         // NPC 상태 로드 (start에서 호출)
         public NpcData GetNpcState(string npcID)
@@ -66,64 +144,18 @@ namespace KW
         {
             if (npcStateDict.ContainsKey(npcId))
             {
-                // 이미 있으면 갱신
                 npcStateDict[npcId].hasMetPlayer = hasMet;
                 npcStateDict[npcId].questState = state;
             }
             else
             {
-                // 없으면 새로 추가
                 npcStateDict.Add(npcId, new NpcData(hasMet, state));
-            }
-        }
-
-        // 플레이어가 현재 수행 중인 퀘스트 목록
-        private void Awake()
-        {
-            if (Instance != null)
-            {
-                Destroy(this);
-            }
-            else
-            {
-                Instance = this;
-                DontDestroyOnLoad(gameObject);
-            }
-        }
-        private void Start()
-        {
-            if (SaveManager.Instance != null)
-            {
-                SaveManager.Instance.questManager = this;
-            }
-
-            GameObject player = GameObject.FindGameObjectWithTag("Player");
-
-            if (player != null)
-            {
-                playerInventory = player.GetComponent<Inventory>();
-            }
-            else
-            {
-                Debug.LogError("[QuestManager] 'Player' 태그를 가진 게임 오브젝트를 찾지 못함");
-            }
-        }
-
-        private void OnDestroy()
-        {
-            if (Instance == this)
-            {
-                OnTrackListUpdated = null;
-                OnQuestListUpdated = null;
-
-                Instance = null;
             }
         }
 
         // 퀘스트 수락 함수 (NPC에서 호출)
         public void AcceptQuest(QuestSO questData)
         {
-            // 중복방지
             if (activeQuests.Exists(q => q.data == questData))
             {
                 Debug.LogWarning("[QuestManager] 이미 수행중인 퀘스트입니다");
@@ -133,12 +165,10 @@ namespace KW
             Quest newQuest = new Quest(questData);
             activeQuests.Add(newQuest);
 
-            Debug.Log($"[QuestManager]퀘스트 수락됨 : {questData.questTitle}");
+            Debug.Log($"[QuestManager] 퀘스트 수락됨 : {questData.questTitle}");
 
-            // 퀘스트 UI 업데이트
             OnQuestListUpdated?.Invoke();
         }
-
 
         // 몬스터 처치 시 호출
         public void OnMonsterKilled(string monsterId, string region)
@@ -147,12 +177,10 @@ namespace KW
 
             foreach (var quest in activeQuests)
             {
-                if (quest.isCompleted) continue;                            // continue 의 조건이 맞을 시, (for, foreach, while등 반복문) 이번 순서의 코드는 무시하고 다음으로 넘어가라
+                if (quest.isCompleted) continue;
                 if (quest.data.type != QuestType.Kill) continue;
 
-                // 이름 확인
                 bool isTargetMatch = (quest.data.targetName == monsterId);
-                // 지역 확인
                 bool isRegionMatch = string.IsNullOrEmpty(quest.data.targetRegion) || (quest.data.targetRegion == region);
 
                 if (isTargetMatch && isRegionMatch)
@@ -169,7 +197,6 @@ namespace KW
                 }
             }
 
-            // 진행도가 변했으면 questUI 업데이트
             if (isUpdated)
             {
                 OnTrackListUpdated?.Invoke();
@@ -179,23 +206,19 @@ namespace KW
 
         public bool IsQuestConditionMet(QuestSO questData)
         {
-            // 활성화된 퀘스트인지 확인
             Quest activeQuest = activeQuests.Find(q => q.data == questData);
-
-            if (activeQuest == null) return false;      // 받지도 않음
+            if (activeQuest == null) return false;
 
             if (activeQuest.isCompleted) return true;
 
-            // 토벌 퀘스트인지 확인
             if (questData.type == QuestType.Kill)
             {
-                // 현재 퀘스트의 count 가 요구 count 보다 많으면 true
                 return activeQuest.currentCount >= questData.targetCount;
             }
-
-            // 수집 퀘스트인지 확인
             else if (questData.type == QuestType.Collect)
             {
+                // 🛠️ 아이템 카운트 검사 전 인벤토리가 유실되었을 경우를 대비한 2차 안전장치
+                if (playerInventory == null) FindPlayerInventory();
                 if (playerInventory == null) return false;
 
                 return playerInventory.GetItemCount(questData.requiredItem) >= questData.targetCount;
@@ -206,10 +229,9 @@ namespace KW
         // 미션 물건 제출
         public void SubmitQuestItems(QuestSO questData)
         {
-            // 퀘스트 타입이 수집퀘스트이고, 요구아이템이 있을 때
             if (questData.type == QuestType.Collect && questData.requiredItem != null)
             {
-                // 플레이어 인벤토리에서 해당 아이템, 갯수만큼 제거
+                if (playerInventory == null) FindPlayerInventory();
                 if (playerInventory != null)
                 {
                     playerInventory.RemoveItemQuantity(questData.requiredItem, questData.targetCount);
@@ -227,18 +249,6 @@ namespace KW
             OnQuestListUpdated?.Invoke();
             OnTrackListUpdated?.Invoke();
         }
-
-        /* public bool CheckQuestIsCompleted(QuestSO questData)
-        {
-            foreach (var quest in activeQuests)
-            {
-                if (quest.data == questData)
-                {
-                    return quest.isCompleted;
-                }
-            }
-            return false;
-        } */
 
         public void FinishQuest(QuestSO questData)
         {
@@ -264,14 +274,12 @@ namespace KW
         {
             if (trackedQuests.Contains(quest))
             {
-                trackedQuests.Remove(quest);        // 이미 있으면 끄기
+                trackedQuests.Remove(quest);
             }
             else
             {
-                // 추적하는 퀘스트는 하나만 유지
-                trackedQuests.Clear();              // 기존 것 삭제
-
-                trackedQuests.Add(quest);           // 지금 받아온 퀘스트 추가
+                trackedQuests.Clear();
+                trackedQuests.Add(quest);
             }
 
             OnQuestListUpdated?.Invoke();
@@ -280,10 +288,7 @@ namespace KW
 
         public void ForceUpdateUI()
         {
-            // 퀘스트 목록
             OnQuestListUpdated?.Invoke();
-
-            // 추적중인 퀘스트 
             OnTrackListUpdated?.Invoke();
         }
     }
