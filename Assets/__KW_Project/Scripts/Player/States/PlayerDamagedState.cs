@@ -48,6 +48,9 @@ namespace KW
             // 넉백 방향 설정
             knockBackDir = movement.lastHisPos;
 
+            // 🌟 [여기에 추가] 맞았을 때 화면 일그러짐 이펙트를 실행하라고 명령합니다!
+            PlayerHitEffect.Instance.TriggerHitEffect();
+
             // Debug.Log($"[피격 로그] FlipX: {movement.sr.flipX} | 원본 방향: {movement.lastHisPos} | 넉백 적용 방향: {knockBackDir}");
         }
 
