@@ -21,6 +21,12 @@ namespace KW
         [Tooltip("처음 번쩍할 때 이미지 전체에 입힐 글자 색상(주황색/금색)을 지정하세요.")]
         [SerializeField] private Color _flashColor = new Color(1f, 0.55f, 0.12f, 1f);
 
+        [Header("사운드 추가 설정")]
+        [Tooltip("소리를 출력할 오디오 소스를 연결하세요. (비어있으면 자동으로 이 오브젝트에서 찾습니다)")]
+        [SerializeField] private AudioSource _audioSource;
+        [Tooltip("화톳불이 활성화될 때 재생할 웅장한 효과음(WAV/MP3)을 넣어주세요.")]
+        [SerializeField] private AudioClip _discoverSound;
+
         [Header("연출 세부 시간(초)")]
         [SerializeField] private float _fadeInDuration = 0.15f;  // 0 -> 255까지 번쩍 뜨는 시간
         [SerializeField] private float _dipDuration = 0.12f;     // 255 -> 230으로 떨어지며 원래 색으로 돌아오는 시간
@@ -52,6 +58,12 @@ namespace KW
         {
             // 게임 시작 시 현재 활성화 상태에 맞춰 불꽃 상태 초기화
             UpdateFireState(_isActivated);
+
+            // 오디오 소스가 인스펙터에서 비어있다면 컴포넌트 자동 캐싱
+            if (_audioSource == null)
+            {
+                _audioSource = GetComponent<AudioSource>();
+            }
 
             // 게임 시작 시 UI가 화면에 보이지 않도록 초기화
             if (discoveryImage != null)
@@ -121,6 +133,12 @@ namespace KW
         /// </summary>
         private IEnumerator DiscoveryUiRoutine()
         {
+            // [사운드 재생] UI가 활성화되는 첫 프레임에 효과음 1회 출력
+            if (_audioSource != null && _discoverSound != null)
+            {
+                _audioSource.PlayOneShot(_discoverSound);
+            }
+
             discoveryImage.gameObject.SetActive(true);
 
             // 1. 투명도 0 -> 255 (1.0f) 페이드 인 (전체 색상을 주황색 틴트로 고정하여 '번쩍' 효과)
