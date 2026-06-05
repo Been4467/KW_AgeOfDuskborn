@@ -94,8 +94,8 @@ namespace KW
                     _uiEffectCoroutine = StartCoroutine(DiscoveryUiRoutine());
                 }
 
-                if (NotificationManager.Instance != null)
-                    NotificationManager.Instance.ShowMessage($"{BonfireID}\n화톳불이 활성화 되었습니다.");
+                //if (NotificationManager.Instance != null)
+                //    NotificationManager.Instance.ShowMessage($"{BonfireID}\n화톳불이 활성화 되었습니다.");
             }
             else
                 EnterRestMode(player, movement);
