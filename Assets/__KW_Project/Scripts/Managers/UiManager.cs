@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI; // Image 사용을 위해 추가
 
 namespace KW
 {
@@ -20,15 +21,15 @@ namespace KW
     {
         public static UiManager Instance { get; private set; }
 
-        public static event Action<bool> OnAnyUiStateChanged; // 패널 열고 닫힐 때 호출
-        public static event Action OnDeathed;               // 죽었을 때 호출
+        public static event Action<bool> OnAnyUiStateChanged;
+        public static event Action OnDeathed;
 
         [SerializeField] private GameObject ingameUi;
         public InGameUI inGameUIScript;
         [SerializeField] private GameObject systemCanvas;
         public SystemCanvasUI systemCanvasUIScript;
 
-        [SerializeField] private List<UiPanel> uiPanels; // 각 (인벤/맵/설정/퀘스트) 패널 리스트
+        [SerializeField] private List<UiPanel> uiPanels;
         [SerializeField] private UiPanel currentOpenPanel = null;
 
         [Header("휴식 상태")]
@@ -45,6 +46,21 @@ namespace KW
         [SerializeField] private CinemachineVirtualCamera virtualCamera;
         [SerializeField] private float restingFOV = 19f;
         [SerializeField] private float normalFOV = 38f;
+
+        // ─────────────────────────────────────────
+        // 화톳불 발견 연출
+        // ─────────────────────────────────────────
+
+        [Header("화톳불 발견 연출")]
+        [Tooltip("InGameUI 하위의 LostBonfireDiscoverd/Image를 연결하세요.")]
+        [SerializeField] private Image _bonfireDiscoveryImage;
+
+        // Bonfire 연출 파라미터 (Bonfire.cs에서 호출 시 전달)
+        private Coroutine _bonfireUiCoroutine;
+
+        // ─────────────────────────────────────────
+        // 생명주기
+        // ─────────────────────────────────────────
 
         private void Awake()
         {
@@ -80,13 +96,20 @@ namespace KW
             SceneManager.sceneLoaded -= OnSceneLoaded;
         }
 
+        private void Start()
+        {
+            InitializeUI();
+        }
+
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             if (Instance == this)
-            {
                 InitializeUI();
-            }
         }
+
+        // ─────────────────────────────────────────
+        // 등록 함수
+        // ─────────────────────────────────────────
 
         public void RegisterSystemCanvas(GameObject canvasObj)
         {
@@ -98,6 +121,10 @@ namespace KW
             ingameUi = canvasObj;
         }
 
+        // ─────────────────────────────────────────
+        // UI 초기화
+        // ─────────────────────────────────────────
+
         private void InitializeUI()
         {
             virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
@@ -106,34 +133,32 @@ namespace KW
             if (systemCanvasUIScript == null) systemCanvasUIScript = FindObjectOfType<SystemCanvasUI>(true);
 
             if (inGameUIScript != null)
-            {
                 ingameUi = inGameUIScript.gameObject;
-            }
 
             if (systemCanvasUIScript != null)
             {
                 systemCanvas = systemCanvasUIScript.gameObject;
-
-                // 🛠️ [핵심] 자식 패널들을 찾기 위해 임시로 활성화합니다.
                 systemCanvas.SetActive(true);
                 RebindUiPanels(systemCanvas.transform);
             }
 
+            // ✅ 씬 전환 후 bonfireDiscoveryImage 재연결
+            if (inGameUIScript != null)
+                _bonfireDiscoveryImage = inGameUIScript.bonfireDiscoveryImage;
+
+            if (_bonfireDiscoveryImage == null)
+                Debug.LogWarning("[UiManager] bonfireDiscoveryImage를 찾을 수 없습니다. InGameUI의 슬롯을 확인하세요.");
+
             currentOpenPanel = null;
             Time.timeScale = 1f;
 
-            // 모든 패널 상태 및 오브젝트 강제 초기화 (비활성화)
             foreach (var panel in uiPanels)
             {
                 panel.isOpen = false;
                 if (panel.panelObject != null)
-                {
                     panel.panelObject.SetActive(false);
-                }
             }
 
-            // 🛠️ [원하시는 초기 상태 설정] 
-            // 게임 시작 및 씬 로드 시 인게임 UI는 켜고, 시스템 캔버스는 완전히 끕니다.
             if (ingameUi != null) ingameUi.SetActive(true);
             if (systemCanvas != null) systemCanvas.SetActive(false);
         }
@@ -144,19 +169,12 @@ namespace KW
             {
                 Transform foundPanel = canvasRoot.Find(panel.name);
                 if (foundPanel != null)
-                {
                     panel.panelObject = foundPanel.gameObject;
-                }
                 else
-                {
                     panel.panelObject = FindChildPanelRecursively(canvasRoot, panel.name);
-                }
 
-                // 패널을 못 찾았을 때 디버그 경고창 출력
                 if (panel.panelObject == null)
-                {
                     Debug.LogError($"[UiManager] '{panel.name}' 패널을 하이어라키에서 찾을 수 없습니다. 대소문자를 확인하세요.");
-                }
             }
         }
 
@@ -171,10 +189,96 @@ namespace KW
             return null;
         }
 
-        private void Start()
+        // ─────────────────────────────────────────
+        // 화톳불 발견 연출 — Bonfire.cs에서 호출
+        // ─────────────────────────────────────────
+
+        /// <summary>
+        /// 화톳불 활성화 연출을 시작합니다. Bonfire.cs의 Interact()에서 호출하세요.
+        /// </summary>
+        public void ShowBonfireDiscovery(
+            AudioSource audioSource,
+            AudioClip discoverSound,
+            Color flashColor,
+            float fadeInDuration,
+            float dipDuration,
+            float stayDuration,
+            float fadeOutDuration)
         {
-            InitializeUI();
+            if (_bonfireDiscoveryImage == null)
+            {
+                Debug.LogError("[UiManager] bonfireDiscoveryImage가 null입니다. 연출을 재생할 수 없습니다.");
+                return;
+            }
+
+            if (_bonfireUiCoroutine != null)
+                StopCoroutine(_bonfireUiCoroutine);
+
+            _bonfireUiCoroutine = StartCoroutine(BonfireDiscoveryRoutine(
+                audioSource, discoverSound, flashColor,
+                fadeInDuration, dipDuration, stayDuration, fadeOutDuration));
         }
+
+        private IEnumerator BonfireDiscoveryRoutine(
+            AudioSource audioSource,
+            AudioClip discoverSound,
+            Color flashColor,
+            float fadeInDuration,
+            float dipDuration,
+            float stayDuration,
+            float fadeOutDuration)
+        {
+            // 사운드 재생
+            if (audioSource != null && discoverSound != null)
+                audioSource.PlayOneShot(discoverSound);
+
+            _bonfireDiscoveryImage.gameObject.SetActive(true);
+
+            // 1. 페이드 인: 투명도 0 → 1 (주황색 번쩍 효과)
+            float timer = 0f;
+            while (timer < fadeInDuration)
+            {
+                timer += Time.deltaTime;
+                float alpha = Mathf.Lerp(0f, 1f, timer / fadeInDuration);
+                _bonfireDiscoveryImage.color = new Color(flashColor.r, flashColor.g, flashColor.b, alpha);
+                yield return null;
+            }
+            _bonfireDiscoveryImage.color = new Color(flashColor.r, flashColor.g, flashColor.b, 1f);
+
+            // 2. 딥: 투명도 1 → 0.9f + 색상 주황 → 흰색 복구
+            timer = 0f;
+            float targetDipAlpha = 230f / 255f;
+            while (timer < dipDuration)
+            {
+                timer += Time.deltaTime;
+                float t = timer / dipDuration;
+                float alpha = Mathf.Lerp(1f, targetDipAlpha, t);
+                Color currentColor = Color.Lerp(flashColor, Color.white, t);
+                _bonfireDiscoveryImage.color = new Color(currentColor.r, currentColor.g, currentColor.b, alpha);
+                yield return null;
+            }
+            _bonfireDiscoveryImage.color = new Color(1f, 1f, 1f, targetDipAlpha);
+
+            // 3. 대기
+            yield return new WaitForSeconds(stayDuration);
+
+            // 4. 페이드 아웃: 투명도 0.9f → 0
+            timer = 0f;
+            while (timer < fadeOutDuration)
+            {
+                timer += Time.deltaTime;
+                float alpha = Mathf.Lerp(targetDipAlpha, 0f, timer / fadeOutDuration);
+                _bonfireDiscoveryImage.color = new Color(1f, 1f, 1f, alpha);
+                yield return null;
+            }
+            _bonfireDiscoveryImage.color = new Color(1f, 1f, 1f, 0f);
+
+            _bonfireDiscoveryImage.gameObject.SetActive(false);
+        }
+
+        // ─────────────────────────────────────────
+        // 패널 관리
+        // ─────────────────────────────────────────
 
         private void Update()
         {
@@ -199,13 +303,10 @@ namespace KW
         private void TogglePanel(UiPanel panelToToggle)
         {
             if (currentOpenPanel == panelToToggle)
-            {
                 currentOpenPanel = null;
-            }
             else
-            {
                 currentOpenPanel = panelToToggle;
-            }
+
             UpdateAllPanelViews();
             OnAnyUiStateChanged?.Invoke(currentOpenPanel != null);
         }
@@ -214,19 +315,9 @@ namespace KW
         {
             bool isAnyUiOpen = (currentOpenPanel != null);
 
-            if (isAnyUiOpen)
-            {
-                Time.timeScale = 0.0001f;
-            }
-            else
-            {
-                Time.timeScale = 1f;
-            }
+            Time.timeScale = isAnyUiOpen ? 0.0001f : 1f;
 
-            // 🛠️ [요구사항 반영] UI가 켜지면 InGameUI는 꺼지고, 닫히면 InGameUI가 켜집니다.
             if (ingameUi != null) ingameUi.SetActive(!isAnyUiOpen);
-
-            // 🛠️ [요구사항 반영] UI가 하나라도 열리면 SystemCanvas를 켜고, 다 닫히면 니다.
             if (systemCanvas != null) systemCanvas.SetActive(isAnyUiOpen);
 
             foreach (var panel in uiPanels)
@@ -242,23 +333,21 @@ namespace KW
         public void OpenPanelByName(string panelName)
         {
             UiPanel panelToOpen = FindPanelUsingFunction(panelName);
-
             if (currentOpenPanel == panelToOpen) return;
-
             if (panelToOpen != null)
-            {
                 TogglePanel(panelToOpen);
-            }
         }
 
         private UiPanel FindPanelUsingFunction(string nameToFind)
         {
             foreach (var panel in uiPanels)
-            {
                 if (panel.name == nameToFind) return panel;
-            }
             return null;
         }
+
+        // ─────────────────────────────────────────
+        // 휴식 / 부활 / 페이드
+        // ─────────────────────────────────────────
 
         public void StartRestMode()
         {
@@ -306,10 +395,7 @@ namespace KW
             if (systemCanvas != null) systemCanvas.SetActive(isRestMode);
             if (systemCanvasUIScript != null) systemCanvasUIScript.ToggleGameMode(!isRestMode);
 
-            DoFadeOut(() =>
-            {
-                OnAnyUiStateChanged?.Invoke(false);
-            });
+            DoFadeOut(() => { OnAnyUiStateChanged?.Invoke(false); });
         }
 
         public void StartResponse()
@@ -319,12 +405,7 @@ namespace KW
             if (systemCanvas != null) systemCanvas.SetActive(isResponseMode);
             if (systemCanvasUIScript != null) systemCanvasUIScript.ToggleGameMode(!isResponseMode);
 
-            // 1. 화면을 암전(FadeIn) 시킨다.
-            DoFadeIn(() =>
-            {
-                // 2. 완전히 어두워지면 0.5초 대기 후 부활 실무 로직(EndResponse) 호출
-                Invoke(nameof(EndResponse), 0.5f);
-            });
+            DoFadeIn(() => { Invoke(nameof(EndResponse), 0.5f); });
         }
 
         private void EndResponse()
@@ -342,7 +423,6 @@ namespace KW
                 if (System.IO.File.Exists(checkPath))
                 {
                     Debug.Log("[UiManager] 세이브 파일이 존재하므로 씬 전환 및 데이터 로드를 시작합니다.");
-                    // ★ 중요: 여기서 로드를 시작하면 SaveManager가 로드 완료 후 페이드 아웃을 켜줄 것입니다.
                     SaveManager.Instance.LoadGame(isRespawn: true);
                 }
                 else
@@ -363,14 +443,9 @@ namespace KW
                     }
 
                     if (SaveManager.Instance.playerHealth != null)
-                    {
                         SaveManager.Instance.playerHealth.SetHealth(SaveManager.Instance.playerHealth.maxHp);
-                    }
 
-                    // 세이브가 없는 경우엔 씬 이동이 없으므로, 여기서 즉시 페이드 아웃을 해줍니다.
-                    DoFadeOut(() => {
-                        OnAnyUiStateChanged?.Invoke(false);
-                    });
+                    DoFadeOut(() => { OnAnyUiStateChanged?.Invoke(false); });
                 }
             }
         }

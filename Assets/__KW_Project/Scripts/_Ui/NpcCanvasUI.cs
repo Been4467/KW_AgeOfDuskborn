@@ -62,32 +62,23 @@ namespace KW
         // 등록 로직 분리 (재사용을 위해)
         private void RegisterToDialogueManager()
         {
+            // Instance 체크는 OnSceneLoaded에서 이미 했으므로 생략 가능
             if (DialogueManager.Instance != null)
             {
-                DialogueManager.Instance.npcCanvas = this;
-                // Debug.Log("[NpcCanvasUI] DialogueManager에 진짜 인스턴스 재등록 완료!");
+                // ✅ 이미 만들어진 완전한 등록 함수를 사용
+                DialogueManager.Instance.RegisterNpcCanvas(this);
             }
 
-            // 🛠️ 안전장치 추가: 씬이 바뀔 때 이전 대화의 버튼 리스너 찌꺼기 제거 (버튼 스킵 버그 방지)
-            if (nextBtn != null)
-            {
-                nextBtn.onClick.RemoveAllListeners();
-            }
-
-            // 🛠️ 안전장치 추가: 생성되어 남아있던 선택지 버튼 찌꺼기 UI 완전 파괴
+            // 정리 로직 (패널, 선택지)만 여기서 처리
             if (choiceBtnHolder != null)
-            {
                 foreach (Transform child in choiceBtnHolder)
-                {
                     Destroy(child.gameObject);
-                }
-            }
 
-            // 씬 바뀌면 대화창 꺼두기
             if (dialoguePanel != null)
-            {
                 dialoguePanel.SetActive(false);
-            }
+
+            // ❌ nextBtn 리스너 조작은 여기서 하지 말 것
+            // DialogueManager.RegisterNpcCanvas() 안에서 처리됨
         }
     }
 }

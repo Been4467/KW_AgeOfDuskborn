@@ -63,22 +63,23 @@ namespace KW
 
                 if (Physics.Raycast(startPos, direction, out hit, interactionDistance))
                 {
+                    Debug.Log($"[Ray 히트] {hit.collider.gameObject.name}");
                     IInteractable interactable = hit.collider.GetComponent<IInteractable>();
-
                     if (interactable != null)
                     {
+                        Debug.Log($"[Interact 호출] {hit.collider.gameObject.name}");
                         interactable.Interact(this.gameObject);
                     }
-
+                    else
+                    {
+                        Debug.LogWarning($"[IInteractable 없음] {hit.collider.gameObject.name}");
+                    }
                     Debug.DrawRay(startPos, direction * hit.distance, successRayColor, 1f);
-                    // Debug.Log("Interact 할 Object 를 찾음");
                 }
                 else
                 {
                     Debug.DrawRay(startPos, direction * interactionDistance, failureRayColor, 1f);
-                    // Debug.Log("Interact 할 Object 를 찾지 못함");
                 }
-
             }
         }
     }

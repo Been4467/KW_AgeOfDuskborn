@@ -74,101 +74,94 @@ namespace KW
             }
         }
 
-        // --- 메인 상호작용 함수 ---
         public void Interact(GameObject player)
         {
-            // 플레이어 인벤토리 참조 (최초 1회)
-            if (_playerInventory == null)
+            // ✅ 넘어온 player가 Destroyed됐을 경우 대비해 직접 찾기
+            GameObject actualPlayer = player;
+            if (actualPlayer == null)
             {
-                _playerInventory = player.GetComponent<Inventory>();
+                actualPlayer = GameObject.FindWithTag("Player");
+                Debug.LogWarning($"[{npcID}] player가 null이어서 태그로 재탐색함");
             }
 
-            if (_dialogueManager == null) _dialogueManager = DialogueManager.Instance;
+            if (actualPlayer == null)
+            {
+                Debug.LogError($"[{npcID}] 플레이어를 찾을 수 없습니다!");
+                return;
+            }
 
-            // 퀘스트 매니저에서 내 상태 다시 불러오기 (LoadState() 의 내용)
-            if(QuestManager.Instance != null)
+            if (_playerInventory == null)
+                _playerInventory = actualPlayer.GetComponent<Inventory>();
+
+
+            if (_playerInventory == null)
+                _playerInventory = player.GetComponent<Inventory>();
+
+            // ✅ null 체크 강화
+            if (_dialogueManager == null)
+                _dialogueManager = DialogueManager.Instance;
+
+            if (_dialogueManager == null)
+            {
+                Debug.LogError($"[{npcID}] DialogueManager를 찾을 수 없습니다!");
+                return; // ✅ 명시적으로 차단
+            }
+
+            // QuestManager 상태 로드
+            if (QuestManager.Instance != null)
             {
                 NpcData data = QuestManager.Instance.GetNpcState(npcID);
-                if(data!= null)
+                if (data != null)
                 {
                     hasMetPlayer = data.hasMetPlayer;
                     currentQuestState = data.questState;
                 }
             }
 
-            // NPC 현재 상태에 따른 대화 시작
+            // ✅ 실제 실행할 DialogueSO를 변수에 먼저 담기
+            DialogueSO targetDialogue = GetTargetDialogue();
+
+            if (targetDialogue == null)
+            {
+                Debug.LogError($"[{npcID}] 현재 상태({currentQuestState})에 해당하는 DialogueSO가 null입니다. Inspector를 확인하세요.");
+                return;
+            }
+
+            _dialogueManager.StartDialogue(targetDialogue, this);
+
+            Debug.Log($"[{npcID}] Interact 진입. _dialogueManager: {(_dialogueManager == null ? "NULL" : "OK")}");
+        }
+
+        // ✅ 상태별 대화 선택 로직을 별도 함수로 분리
+        private DialogueSO GetTargetDialogue()
+        {
             switch (currentQuestState)
             {
-                case QuestState.NotOffered:                     // 아직 퀘스트를 주지 않은 상태
-                    if (hasMetPlayer == false)
+                case QuestState.NotOffered:
+                    if (!hasMetPlayer)
                     {
                         hasMetPlayer = true;
                         SaveState();
-                        _dialogueManager.StartDialogue(firstMeetingDialogue, this);
+                        return firstMeetingDialogue;
                     }
-                    else
-                    {
-                        _dialogueManager.StartDialogue(questOfferDialogue, this);
-                    }
-                    break;
+                    return questOfferDialogue;
 
-                case QuestState.Declined:                       // 퀘스트를 알려줬지만 거절당한 상태
-                    _dialogueManager.StartDialogue(declinedLoopDialogue, this);
-                    break;
+                case QuestState.Declined:
+                    return declinedLoopDialogue;
 
-                case QuestState.Accepted:                       // 퀘스트가 수락된 상태
-                    // QuestManager 에서 조건 만족 여부 확인
-                    if (QuestManager.Instance.IsQuestConditionMet(questData))
-                    {
-                        // 조건만족 -> 완료(보상) 대화 시작
-                        _dialogueManager.StartDialogue(questCompletionDialogue, this);
-                    }
-                    else
-                    {
-                        // 아직 달성 못 했으면 수락 후 재방문 대사 
-                        _dialogueManager.StartDialogue(acceptedLoopDialogue, this);
-                    }
-                    break;
-                case QuestState.Completed:                      // 퀘스트 완료된 상태
-                    _dialogueManager.StartDialogue(afterQuestDialogue, this);
-                    break;
+                case QuestState.Accepted:
+                    bool conditionMet = QuestManager.Instance != null
+                                        && QuestManager.Instance.IsQuestConditionMet(questData);
+                    return conditionMet ? questCompletionDialogue : acceptedLoopDialogue;
 
+                case QuestState.Completed:
+                    return afterQuestDialogue;
+
+                default:
+                    return null;
             }
+        }
 
-            /*  // NPC의 '현재 상태'에 따라 다른 대화를 시작
-             if (hasMetPlayer == false)
-             {
-                 hasMetPlayer = true;
-                 _dialogueManager.StartDialogue(firstMeetingDialogue, this);
-             }
-             else if (currentQuestState == QuestState.NotOffered)
-             {
-                 _dialogueManager.StartDialogue(questOfferDialogue, this);
-             }
-             else if (currentQuestState == QuestState.Declined)
-             {
-                 _dialogueManager.StartDialogue(declinedLoopDialogue, this);
-             }
-             else if (currentQuestState == QuestState.Accepted) // 퀘스트를 수락한 상태일 때
-             {
-                 // 요구 아이템을 다 모았는지 '먼저 확인'
-                 if (CheckQuestRequirements())
-                 {
-                     // [If Yes] "다 모아왔군!" 대화 시작 (보상받기 버튼)
-                     _dialogueManager.StartDialogue(afterQuestDialogue, this);
-                 }
-                 else
-                 {
-                     // [If No] "아직인가?" 대화 시작
-                     _dialogueManager.StartDialogue(acceptedLoopDialogue, this);
-                 }
-             }
-             else if (currentQuestState == QuestState.Completed)
-             {
-                 _dialogueManager.StartDialogue(afterQuestDialogue, this);
-             } */
-        } 
-        
         public void OnChoiceMade(DialogueChoice choice)
         {
             // 보상 지급
