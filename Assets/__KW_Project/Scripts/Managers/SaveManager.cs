@@ -54,6 +54,8 @@ namespace KW
         // 죽은 몬스터ID 를 저장할 리스트
         public List<string> deadMonsterIDs = new List<string>();
 
+        public List<string> activatedBonfireIDs = new List<string>();
+
         private void Awake()
         {
             // 이미 할당된 instance가 내가 아니라 '다른' 오브젝트일 때만 파괴합니다.
@@ -157,16 +159,12 @@ namespace KW
             // 현재 메모리에 있는 사망자 명단을 저장 데이터에 복사
             data.deadMonsterIDs = new List<string>(deadMonsterIDs);
 
+            // ✅ 활성화된 화톳불 명단 저장 데이터에 복사
+            data.activatedBonfireIDs = new List<string>(activatedBonfireIDs);
+
             // 파일 쓰기
             string json = JsonUtility.ToJson(data, true);
             File.WriteAllText(savePath, json);
-
-            /*   if(NotificationManager.Instance != null)
-              {
-                  string message = "게임이 저장되었습니다.";
-
-                  NotificationManager.Instance.ShowMessage(message);
-              } */
             Debug.Log("게임저장됨 : " + savePath);
         }
 
@@ -405,6 +403,13 @@ namespace KW
             }
 
             deadMonsterIDs = new List<string>(data.deadMonsterIDs);
+
+            // ✅ 활성화된 화톳불 명단 복구
+            activatedBonfireIDs = new List<string>(data.activatedBonfireIDs);
+
+            // ✅ 현재 씬에 배치된 화톳불들의 상태를 세이브 데이터 기준으로 새로고침
+            RefreshBonfiresInScene();
+
             ReApplyEquippedItems();
 
             if (player != null)
@@ -423,6 +428,25 @@ namespace KW
             }
 
             OnLoadGame?.Invoke();
+        }
+
+        public void RefreshBonfiresInScene()
+        {
+            Bonfire[] bonfires = FindObjectsOfType<Bonfire>(true);
+            foreach (var bonfire in bonfires)
+            {
+                if (string.IsNullOrEmpty(bonfire.BonfireID)) continue;
+
+                // 세이브된 명단에 내 ID가 있다면 활성화 상태로 만듦
+                if (activatedBonfireIDs.Contains(bonfire.BonfireID))
+                {
+                    bonfire.isActivated = true;
+                }
+                else
+                {
+                    bonfire.isActivated = false;
+                }
+            }
         }
 
         public void DisplayBtn()

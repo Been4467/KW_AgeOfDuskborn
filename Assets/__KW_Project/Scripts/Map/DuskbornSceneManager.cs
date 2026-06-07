@@ -63,6 +63,15 @@ namespace KW
             MovePlayerToSpawnPoint();
             yield return null;
 
+            // ===================================================================
+            // ✅ [여기에 추가] 새 씬의 오브젝트 로드가 끝났으므로 화톳불 상태를 먼저 복구합니다.
+            if (SaveManager.Instance != null)
+            {
+                Debug.Log($"[DuskbornSceneManager] 새 씬의 화톳불 상태를 세이브 데이터 기준으로 갱신합니다.");
+                SaveManager.Instance.RefreshBonfiresInScene();
+            }
+            // ===================================================================
+
             // 5. 💡 [핵심 수정] SaveManager에 데이터 복구를 요청할 때 매개변수를 직접 지정합니다.
             if (SaveManager.Instance != null)
             {

@@ -26,6 +26,9 @@ namespace KW
 
         [Header("몬스터 사망 후 보관 리스트")]
         public List<string> deadMonsterIDs = new List<string>();
+
+        [Header("활성화된 화톳불 ID 리스트")]
+        public List<string> activatedBonfireIDs = new List<string>();
     }
 
     [System.Serializable]
