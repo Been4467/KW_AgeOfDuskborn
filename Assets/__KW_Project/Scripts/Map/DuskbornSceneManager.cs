@@ -40,6 +40,10 @@ namespace KW
 
         private IEnumerator LoadSceneRoutine(string sceneName)
         {
+            // ✅ 추가: 씬 로드 전 페이드 아웃
+            if (FadeManager.Instance != null)
+                yield return StartCoroutine(FadeManager.Instance.FadeOut());
+
             // 1. 씬 변경 직전 현재 데이터를 세이브 파일에 백업
             if (SaveManager.Instance != null)
             {
@@ -80,6 +84,10 @@ namespace KW
                 // 💡 부활은 false, 문을 통한 구역 이동이므로 'isPortalMoving'에 true를 보냅니다!
                 SaveManager.Instance.LoadGame(isRespawn: false, isPortalMoving: true);
             }
+
+            // ✅ 추가: 모든 배치 완료 후 페이드 인
+            if (FadeManager.Instance != null)
+                yield return StartCoroutine(FadeManager.Instance.FadeIn());
         }
 
         private void CleanUpDuplicatePlayer()
