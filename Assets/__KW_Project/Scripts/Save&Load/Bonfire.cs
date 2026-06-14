@@ -45,10 +45,8 @@ namespace KW
 
         private void Start()
         {
-            // 게임 시작 시 현재 활성화 상태에 맞춰 불꽃 상태 초기화
             UpdateFireState(_isActivated);
 
-            // 오디오 소스가 인스펙터에서 비어있다면 컴포넌트 자동 캐싱
             if (_audioSource == null)
                 _audioSource = GetComponent<AudioSource>();
         }
@@ -68,22 +66,17 @@ namespace KW
 
             if (_isActivated == false)
             {
-                // 1. 상태 변경
                 isActivated = true;
 
-                // ✅ 2. SaveManager의 리스트에 이 화톳불 ID 등록 및 자동 저장
                 if (SaveManager.Instance != null)
                 {
                     if (!SaveManager.Instance.activatedBonfireIDs.Contains(BonfireID))
                     {
                         SaveManager.Instance.activatedBonfireIDs.Add(BonfireID);
                     }
-
-                    // 최초 활성화 시점에 게임을 자동 저장하여 씬을 나갔다 와도 유지되도록 함
                     SaveManager.Instance.SaveGame();
                 }
 
-                // 3. UI 연출 완전히 위임
                 if (UiManager.Instance != null)
                 {
                     UiManager.Instance.ShowBonfireDiscovery(
@@ -98,7 +91,10 @@ namespace KW
             }
             else
             {
-                // ✅ 이미 활성화된 상태라면 휴식 모드 진입 및 체력 회복 (이후 이벤트 연출)
+                // ✅ 휴식 진입 전 페이드 연출이 재생 중이라면 즉시 중단
+                if (UiManager.Instance != null)
+                    UiManager.Instance.CancelBonfireDiscovery();
+
                 EnterRestMode(player, movement);
             }
         }

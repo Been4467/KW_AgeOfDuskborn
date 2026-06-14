@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI; // Image 사용을 위해 추가
+using UnityEngine.UI;
 
 namespace KW
 {
@@ -55,7 +55,6 @@ namespace KW
         [Tooltip("InGameUI 하위의 LostBonfireDiscoverd/Image를 연결하세요.")]
         [SerializeField] private Image _bonfireDiscoveryImage;
 
-        // Bonfire 연출 파라미터 (Bonfire.cs에서 호출 시 전달)
         private Coroutine _bonfireUiCoroutine;
 
         // ─────────────────────────────────────────
@@ -103,6 +102,9 @@ namespace KW
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
+            // ✅ 씬 전환 시 화톳불 연출이 재생 중이었다면 즉시 정리
+            CancelBonfireDiscovery();
+
             if (Instance == this)
                 InitializeUI();
         }
@@ -142,7 +144,6 @@ namespace KW
                 RebindUiPanels(systemCanvas.transform);
             }
 
-            // ✅ 씬 전환 후 bonfireDiscoveryImage 재연결
             if (inGameUIScript != null)
                 _bonfireDiscoveryImage = inGameUIScript.bonfireDiscoveryImage;
 
@@ -193,9 +194,6 @@ namespace KW
         // 화톳불 발견 연출 — Bonfire.cs에서 호출
         // ─────────────────────────────────────────
 
-        /// <summary>
-        /// 화톳불 활성화 연출을 시작합니다. Bonfire.cs의 Interact()에서 호출하세요.
-        /// </summary>
         public void ShowBonfireDiscovery(
             AudioSource audioSource,
             AudioClip discoverSound,
@@ -219,6 +217,25 @@ namespace KW
                 fadeInDuration, dipDuration, stayDuration, fadeOutDuration));
         }
 
+        /// <summary>
+        /// 화톳불 연출을 즉시 중단하고 이미지를 초기 상태로 되돌립니다.
+        /// 휴식 진입, 씬 전환, UI 팝업 등 연출을 끊어야 하는 상황에서 호출하세요.
+        /// </summary>
+        public void CancelBonfireDiscovery()
+        {
+            if (_bonfireUiCoroutine != null)
+            {
+                StopCoroutine(_bonfireUiCoroutine);
+                _bonfireUiCoroutine = null;
+            }
+
+            if (_bonfireDiscoveryImage != null)
+            {
+                _bonfireDiscoveryImage.color = new Color(1f, 1f, 1f, 0f);
+                _bonfireDiscoveryImage.gameObject.SetActive(false);
+            }
+        }
+
         private IEnumerator BonfireDiscoveryRoutine(
             AudioSource audioSource,
             AudioClip discoverSound,
@@ -228,13 +245,12 @@ namespace KW
             float stayDuration,
             float fadeOutDuration)
         {
-            // 사운드 재생
             if (audioSource != null && discoverSound != null)
                 audioSource.PlayOneShot(discoverSound);
 
             _bonfireDiscoveryImage.gameObject.SetActive(true);
 
-            // 1. 페이드 인: 투명도 0 → 1 (주황색 번쩍 효과)
+            // 1. 페이드 인
             float timer = 0f;
             while (timer < fadeInDuration)
             {
@@ -245,7 +261,7 @@ namespace KW
             }
             _bonfireDiscoveryImage.color = new Color(flashColor.r, flashColor.g, flashColor.b, 1f);
 
-            // 2. 딥: 투명도 1 → 0.9f + 색상 주황 → 흰색 복구
+            // 2. 딥
             timer = 0f;
             float targetDipAlpha = 230f / 255f;
             while (timer < dipDuration)
@@ -262,7 +278,7 @@ namespace KW
             // 3. 대기
             yield return new WaitForSeconds(stayDuration);
 
-            // 4. 페이드 아웃: 투명도 0.9f → 0
+            // 4. 페이드 아웃
             timer = 0f;
             while (timer < fadeOutDuration)
             {
@@ -271,9 +287,9 @@ namespace KW
                 _bonfireDiscoveryImage.color = new Color(1f, 1f, 1f, alpha);
                 yield return null;
             }
-            _bonfireDiscoveryImage.color = new Color(1f, 1f, 1f, 0f);
 
-            _bonfireDiscoveryImage.gameObject.SetActive(false);
+            // ✅ 코루틴이 정상 완료된 경우에도 CancelBonfireDiscovery()로 일관되게 정리
+            CancelBonfireDiscovery();
         }
 
         // ─────────────────────────────────────────
@@ -351,6 +367,9 @@ namespace KW
 
         public void StartRestMode()
         {
+            // ✅ 휴식 진입 시 화톳불 연출이 재생 중이라면 즉시 정리
+            CancelBonfireDiscovery();
+
             isRestMode = true;
 
             if (ingameUi != null) ingameUi.SetActive(!isRestMode);
@@ -400,6 +419,9 @@ namespace KW
 
         public void StartResponse()
         {
+            // ✅ 부활 시에도 화톳불 연출 정리
+            CancelBonfireDiscovery();
+
             isResponseMode = true;
 
             if (systemCanvas != null) systemCanvas.SetActive(isResponseMode);
@@ -453,12 +475,26 @@ namespace KW
         public void DoFadeIn(Action onComplete)
         {
             StopAllCoroutines();
+            // ✅ StopAllCoroutines()가 bonfire 코루틴도 죽이므로 이미지 상태를 즉시 정리
+            _bonfireUiCoroutine = null;
+            if (_bonfireDiscoveryImage != null)
+            {
+                _bonfireDiscoveryImage.color = new Color(1f, 1f, 1f, 0f);
+                _bonfireDiscoveryImage.gameObject.SetActive(false);
+            }
             StartCoroutine(FadeRoutine(0, 1, onComplete));
         }
 
         public void DoFadeOut(Action onComplete)
         {
             StopAllCoroutines();
+            // ✅ 동일하게 정리
+            _bonfireUiCoroutine = null;
+            if (_bonfireDiscoveryImage != null)
+            {
+                _bonfireDiscoveryImage.color = new Color(1f, 1f, 1f, 0f);
+                _bonfireDiscoveryImage.gameObject.SetActive(false);
+            }
             StartCoroutine(FadeRoutine(1, 0, onComplete));
         }
 
